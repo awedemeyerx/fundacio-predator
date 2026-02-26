@@ -3,12 +3,25 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Lang } from '@/lib/types';
+import { Lang, DEFAULT_LANG } from '@/lib/types';
 import { siteConfig } from '@/lib/site.config';
 import { langUrl } from '@/lib/hreflang';
 
 function LangSwitcher({ lang }: { lang: Lang }) {
+  const pathname = usePathname();
+
+  // Strip current language prefix to get the raw path
+  let rawPath = pathname;
+  if (rawPath.startsWith(`/${lang}/`)) {
+    rawPath = rawPath.slice(lang.length + 1);
+  } else if (rawPath === `/${lang}`) {
+    rawPath = '/';
+  } else if (lang === DEFAULT_LANG && !rawPath.startsWith('/en') && !rawPath.startsWith('/es')) {
+    // Already a bare path for default language — keep as-is
+  }
+
   const langs: { code: Lang; label: string }[] = [
     { code: 'de', label: 'DE' },
     { code: 'en', label: 'EN' },
@@ -21,7 +34,7 @@ function LangSwitcher({ lang }: { lang: Lang }) {
         <span key={code} className="flex items-center">
           {i > 0 && <span className="text-charcoal/20 mx-0.5">·</span>}
           <Link
-            href={langUrl(code, '/')}
+            href={langUrl(code, rawPath)}
             className={`px-1 py-0.5 transition-colors ${
               code === lang
                 ? 'text-charcoal font-medium'

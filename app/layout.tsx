@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { Inter, Libre_Baskerville } from 'next/font/google';
 import './globals.css';
 
@@ -14,6 +15,15 @@ const libre = Libre_Baskerville({
   variable: '--font-libre',
   display: 'swap',
 });
+
+export const metadata: Metadata = {
+  icons: {
+    icon: [
+      { url: '/favicon.png', type: 'image/png' },
+    ],
+    apple: '/apple-touch-icon.png',
+  },
+};
 
 export default function RootLayout({
   children,
