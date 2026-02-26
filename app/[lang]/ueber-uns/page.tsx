@@ -2,6 +2,7 @@ import { Lang } from '@/lib/types';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import FadeIn from '@/components/ui/FadeIn';
+import ContactForm from '@/components/sections/ContactForm';
 
 const content = {
   de: {
@@ -116,6 +117,7 @@ export default function UeberUnsPage({ params }: { params: { lang: string } }) {
           </FadeIn>
         </div>
       </main>
+      <ContactForm lang={lang} page="ueber-uns" />
       <Footer lang={lang} />
     </>
   );

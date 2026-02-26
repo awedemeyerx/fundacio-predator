@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Lang } from '@/lib/types';
 import { getAlternates } from '@/lib/hreflang';
 import { siteConfig } from '@/lib/site.config';
+import CookieConsent from '@/components/ui/CookieConsent';
 
 export async function generateStaticParams() {
   return [{ lang: 'de' }, { lang: 'en' }, { lang: 'es' }];
@@ -39,5 +40,11 @@ export default function LangLayout({
   children: React.ReactNode;
   params: { lang: string };
 }) {
-  return <>{children}</>;
+  const lang = (params.lang as Lang) || 'de';
+  return (
+    <>
+      {children}
+      <CookieConsent lang={lang} />
+    </>
+  );
 }
