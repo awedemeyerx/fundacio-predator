@@ -36,7 +36,7 @@ export async function getAllPosts(): Promise<BlogPost[]> {
   if (!supabaseAdmin) return [];
 
   const { data, error } = await supabaseAdmin
-    .from('blog_posts')
+    .from('fundacio_blog_posts')
     .select('*')
     .eq('active', true)
     .order('published_at', { ascending: false });
@@ -55,7 +55,7 @@ export async function getPostBySlug(slug: string, lang: Lang): Promise<BlogPost 
   const slugColumn = `slug_${lang}`;
 
   const { data, error } = await supabaseAdmin
-    .from('blog_posts')
+    .from('fundacio_blog_posts')
     .select('*')
     .eq(slugColumn, slug)
     .eq('active', true)
@@ -65,7 +65,7 @@ export async function getPostBySlug(slug: string, lang: Lang): Promise<BlogPost 
     // Fallback: try all slug columns
     for (const l of ['de', 'en', 'es'] as Lang[]) {
       const { data: fallback } = await supabaseAdmin
-        .from('blog_posts')
+        .from('fundacio_blog_posts')
         .select('*')
         .eq(`slug_${l}`, slug)
         .eq('active', true)
@@ -82,7 +82,7 @@ export async function getAllPostSlugs(): Promise<{ slug_de: string; slug_en: str
   if (!supabaseAdmin) return [];
 
   const { data, error } = await supabaseAdmin
-    .from('blog_posts')
+    .from('fundacio_blog_posts')
     .select('slug_de, slug_en, slug_es')
     .eq('active', true);
 

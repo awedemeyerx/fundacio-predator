@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     // Save to Supabase
     if (supabaseAdmin) {
       try {
-        await supabaseAdmin.from('contact_submissions').insert({
+        await supabaseAdmin.from('fundacio_contact_submissions').insert({
           name,
           email,
           message,

@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
       // Log donation to Supabase
       if (supabaseAdmin) {
         try {
-          await supabaseAdmin.from('donations').insert({
+          await supabaseAdmin.from('fundacio_donations').insert({
             stripe_session_id: session.id,
             amount_cents: session.amount_total || 0,
             currency: session.currency || 'eur',

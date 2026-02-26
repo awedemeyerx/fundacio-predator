@@ -4,7 +4,7 @@
 -- =============================================
 
 -- Blog Posts (multilingual)
-CREATE TABLE IF NOT EXISTS blog_posts (
+CREATE TABLE IF NOT EXISTS fundacio_blog_posts (
   id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   slug_de text UNIQUE NOT NULL,
   slug_en text UNIQUE NOT NULL,
@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS blog_posts (
 );
 
 -- Donations (Stripe payment log)
-CREATE TABLE IF NOT EXISTS donations (
+CREATE TABLE IF NOT EXISTS fundacio_donations (
   id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   stripe_session_id text UNIQUE,
   amount_cents integer NOT NULL,
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS donations (
 );
 
 -- Contact form submissions
-CREATE TABLE IF NOT EXISTS contact_submissions (
+CREATE TABLE IF NOT EXISTS fundacio_contact_submissions (
   id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   name text NOT NULL,
   email text NOT NULL,
@@ -49,5 +49,5 @@ CREATE TABLE IF NOT EXISTS contact_submissions (
 );
 
 -- Indexes
-CREATE INDEX IF NOT EXISTS idx_blog_posts_published ON blog_posts(published_at DESC) WHERE active = true;
-CREATE INDEX IF NOT EXISTS idx_donations_created ON donations(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_fundacio_blog_posts_published ON fundacio_blog_posts(published_at DESC) WHERE active = true;
+CREATE INDEX IF NOT EXISTS idx_fundacio_donations_created ON fundacio_donations(created_at DESC);

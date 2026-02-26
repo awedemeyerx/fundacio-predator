@@ -141,7 +141,7 @@ export async function POST() {
 
   for (const post of posts) {
     const { data, error } = await supabaseAdmin
-      .from('blog_posts')
+      .from('fundacio_blog_posts')
       .upsert(post, { onConflict: 'slug_de' })
       .select();
 
