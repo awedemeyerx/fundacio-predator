@@ -8,6 +8,7 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import FadeIn from '@/components/ui/FadeIn';
 import DonationCTA from '@/components/sections/DonationCTA';
+import BlogContent from '@/components/BlogContent';
 import { getPostBySlug, getLocalizedPost, getAllPostSlugs } from '@/lib/blog';
 import type { Metadata } from 'next';
 
@@ -134,9 +135,8 @@ export default async function BlogPostPage({
               prose-strong:text-charcoal prose-strong:font-semibold
               prose-li:text-charcoal-body/80
             ">
-              {/* Render as HTML if content contains HTML tags, else as paragraphs */}
               {post.content && post.content.includes('<') ? (
-                <div dangerouslySetInnerHTML={{ __html: post.content }} />
+                <BlogContent html={post.content} />
               ) : (
                 post.content?.split('\n\n').map((paragraph, i) => {
                   if (paragraph.startsWith('**') && paragraph.endsWith('**')) {
