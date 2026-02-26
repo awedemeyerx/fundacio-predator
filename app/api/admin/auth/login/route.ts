@@ -13,17 +13,26 @@ export async function POST(request: NextRequest) {
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.supabase_publishable_key || '';
   const supabaseServiceKey = process.env.supabase_secret_key || process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
-  // Check if email exists in admin users table before attempting login
+  // Check if email is authorized: first try admin_users table, fallback to ADMIN_MAIL env
   if (supabaseServiceKey) {
     const adminClient = createClient(supabaseUrl, supabaseServiceKey);
-    const { data: adminUser } = await adminClient
+    const { data: adminUser, error: tableError } = await adminClient
       .from('fundacio_admin_users')
       .select('id')
       .eq('email', email.toLowerCase())
       .single();
 
+    // If table doesn't exist or user not found, fall back to ADMIN_MAIL
     if (!adminUser) {
-      return NextResponse.json({ error: 'Kein Zugang. Bitte kontaktiere einen Administrator.' }, { status: 403 });
+      const adminMail = process.env.ADMIN_MAIL || '';
+      const isAllowedByEnv = adminMail
+        .split(',')
+        .map((e: string) => e.trim().toLowerCase())
+        .includes(email.toLowerCase());
+
+      if (!isAllowedByEnv) {
+        return NextResponse.json({ error: 'Kein Zugang. Bitte kontaktiere einen Administrator.' }, { status: 403 });
+      }
     }
   }
 

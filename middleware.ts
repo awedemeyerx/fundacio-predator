@@ -67,17 +67,26 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/admin/login', request.url));
     }
 
-    // Check if user exists in fundacio_admin_users table
+    // Check if user is authorized: admin_users table OR ADMIN_MAIL fallback
     if (supabaseServiceKey) {
       const adminClient = createClient(supabaseUrl, supabaseServiceKey);
-      const { data } = await adminClient
+      const { data: adminUser } = await adminClient
         .from('fundacio_admin_users')
         .select('id')
         .eq('auth_uid', session.user.id)
         .single();
 
-      if (!data) {
-        return NextResponse.redirect(new URL('/admin/login?error=not_authorized', request.url));
+      if (!adminUser) {
+        // Fallback: check ADMIN_MAIL env
+        const adminMail = process.env.ADMIN_MAIL || '';
+        const isAllowedByEnv = adminMail
+          .split(',')
+          .map((e: string) => e.trim().toLowerCase())
+          .includes((session.user.email || '').toLowerCase());
+
+        if (!isAllowedByEnv) {
+          return NextResponse.redirect(new URL('/admin/login?error=not_authorized', request.url));
+        }
       }
     }
 

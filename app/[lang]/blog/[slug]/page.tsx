@@ -9,7 +9,8 @@ import Footer from '@/components/layout/Footer';
 import FadeIn from '@/components/ui/FadeIn';
 import DonationCTA from '@/components/sections/DonationCTA';
 import BlogContent from '@/components/BlogContent';
-import { getPostBySlug, getLocalizedPost, getAllPostSlugs } from '@/lib/blog';
+import { getPostBySlug, getLocalizedPost, getAllPostSlugs, getAdjacentPosts, getRelatedPosts } from '@/lib/blog';
+import BlogEngagement from '@/components/BlogEngagement';
 import type { Metadata } from 'next';
 
 export const revalidate = 300;
@@ -68,6 +69,23 @@ export default async function BlogPostPage({
   if (!rawPost) return notFound();
 
   const post = getLocalizedPost(rawPost, lang);
+
+  // Fetch adjacent & related posts
+  const [{ prev, next }, related] = await Promise.all([
+    getAdjacentPosts(rawPost.id, lang),
+    getRelatedPosts(rawPost.id),
+  ]);
+
+  const prevPost = prev
+    ? { slug: getLocalizedPost(prev, lang).slug, title: getLocalizedPost(prev, lang).title, cover_image_url: prev.cover_image_url, published_at: prev.published_at }
+    : null;
+  const nextPost = next
+    ? { slug: getLocalizedPost(next, lang).slug, title: getLocalizedPost(next, lang).title, cover_image_url: next.cover_image_url, published_at: next.published_at }
+    : null;
+  const relatedPosts = related.map((r) => {
+    const loc = getLocalizedPost(r, lang);
+    return { slug: loc.slug, title: loc.title, cover_image_url: r.cover_image_url, published_at: r.published_at };
+  });
 
   return (
     <>
@@ -152,19 +170,15 @@ export default async function BlogPostPage({
             </div>
           </FadeIn>
 
-          {/* Back to blog */}
+          {/* Engagement: Likes, Comments, Nav, Related Posts */}
           <FadeIn delay={0.3}>
-            <div className="mt-16 pt-8 border-t border-charcoal/5">
-              <Link
-                href={langUrl(lang, '/blog')}
-                className="inline-flex items-center text-charcoal/50 hover:text-amber transition-colors text-sm"
-              >
-                <svg className="w-4 h-4 mr-2 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-                {lang === 'de' ? 'Zurück zum Blog' : lang === 'es' ? 'Volver al blog' : 'Back to blog'}
-              </Link>
-            </div>
+            <BlogEngagement
+              postId={rawPost.id}
+              lang={lang}
+              prevPost={prevPost}
+              nextPost={nextPost}
+              relatedPosts={relatedPosts}
+            />
           </FadeIn>
         </article>
 

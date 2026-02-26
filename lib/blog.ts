@@ -78,6 +78,63 @@ export async function getPostBySlug(slug: string, lang: Lang): Promise<BlogPost 
   return data;
 }
 
+/** Get the previous and next posts (by published_at) relative to a given post */
+export async function getAdjacentPosts(
+  postId: number,
+  lang: Lang
+): Promise<{ prev: BlogPost | null; next: BlogPost | null }> {
+  if (!supabaseAdmin) return { prev: null, next: null };
+
+  // Get the current post's published_at
+  const { data: current } = await supabaseAdmin
+    .from('fundacio_blog_posts')
+    .select('published_at')
+    .eq('id', postId)
+    .single();
+
+  if (!current) return { prev: null, next: null };
+
+  // Previous (newer) post
+  const { data: prevData } = await supabaseAdmin
+    .from('fundacio_blog_posts')
+    .select('*')
+    .eq('active', true)
+    .gt('published_at', current.published_at)
+    .order('published_at', { ascending: true })
+    .limit(1)
+    .single();
+
+  // Next (older) post
+  const { data: nextData } = await supabaseAdmin
+    .from('fundacio_blog_posts')
+    .select('*')
+    .eq('active', true)
+    .lt('published_at', current.published_at)
+    .order('published_at', { ascending: false })
+    .limit(1)
+    .single();
+
+  return { prev: prevData || null, next: nextData || null };
+}
+
+/** Get 2 related posts (excluding the current one), sorted by recency */
+export async function getRelatedPosts(
+  postId: number
+): Promise<BlogPost[]> {
+  if (!supabaseAdmin) return [];
+
+  const { data, error } = await supabaseAdmin
+    .from('fundacio_blog_posts')
+    .select('*')
+    .eq('active', true)
+    .neq('id', postId)
+    .order('published_at', { ascending: false })
+    .limit(2);
+
+  if (error) return [];
+  return data || [];
+}
+
 export async function getAllPostSlugs(): Promise<{ slug_de: string; slug_en: string; slug_es: string }[]> {
   if (!supabaseAdmin) return [];
 

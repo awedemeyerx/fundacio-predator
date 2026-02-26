@@ -97,7 +97,43 @@ CREATE TABLE IF NOT EXISTS fundacio_admin_users (
   updated_at timestamptz DEFAULT now()
 );
 
+-- Blog Likes (anonymous, fingerprint-based)
+CREATE TABLE IF NOT EXISTS fundacio_blog_likes (
+  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  post_id bigint NOT NULL REFERENCES fundacio_blog_posts(id) ON DELETE CASCADE,
+  fingerprint text NOT NULL,
+  created_at timestamptz DEFAULT now(),
+  UNIQUE(post_id, fingerprint)
+);
+
+-- Blog Comments (public, no auth required)
+CREATE TABLE IF NOT EXISTS fundacio_blog_comments (
+  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  post_id bigint NOT NULL REFERENCES fundacio_blog_posts(id) ON DELETE CASCADE,
+  author_name text NOT NULL,
+  author_email text,
+  message text NOT NULL,
+  approved boolean DEFAULT true,
+  created_at timestamptz DEFAULT now()
+);
+
+-- RLS: Protect admin_users from public access (only service role can read/write)
+ALTER TABLE fundacio_admin_users ENABLE ROW LEVEL SECURITY;
+-- No public policies = no access via anon/authenticated keys, only service_role
+
+-- RLS: Blog likes & comments are public-read, public-insert
+ALTER TABLE fundacio_blog_likes ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Anyone can read likes" ON fundacio_blog_likes FOR SELECT USING (true);
+CREATE POLICY "Anyone can insert likes" ON fundacio_blog_likes FOR INSERT WITH CHECK (true);
+CREATE POLICY "Anyone can delete own likes" ON fundacio_blog_likes FOR DELETE USING (true);
+
+ALTER TABLE fundacio_blog_comments ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Anyone can read approved comments" ON fundacio_blog_comments FOR SELECT USING (approved = true);
+CREATE POLICY "Anyone can insert comments" ON fundacio_blog_comments FOR INSERT WITH CHECK (true);
+
 -- Indexes
+CREATE INDEX IF NOT EXISTS idx_fundacio_blog_likes_post ON fundacio_blog_likes(post_id);
+CREATE INDEX IF NOT EXISTS idx_fundacio_blog_comments_post ON fundacio_blog_comments(post_id) WHERE approved = true;
 CREATE INDEX IF NOT EXISTS idx_fundacio_blog_posts_published ON fundacio_blog_posts(published_at DESC) WHERE active = true;
 CREATE INDEX IF NOT EXISTS idx_fundacio_donations_created ON fundacio_donations(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_fundacio_campaigns_active ON fundacio_campaigns(active) WHERE active = true;
