@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createServerClient } from '@supabase/ssr';
+import { createClient } from '@supabase/supabase-js';
 
 const SUPPORTED_LANGS = ['de', 'en', 'es'];
 const DEFAULT_LANG = 'de';
@@ -21,10 +23,68 @@ function getPreferredLang(request: NextRequest): string {
   return DEFAULT_LANG;
 }
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Extract first path segment
+  // --- Admin routes: skip language routing, enforce auth ---
+  if (pathname.startsWith('/admin')) {
+    // Allow login page and OAuth callback without auth
+    if (pathname === '/admin/login' || pathname.startsWith('/admin/auth/callback')) {
+      return NextResponse.next();
+    }
+
+    // Auth check for all other /admin/* routes
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.supabase_url || '';
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.supabase_publishable_key || '';
+    const supabaseServiceKey = process.env.supabase_secret_key || process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+
+    if (!supabaseUrl || !supabaseAnonKey) {
+      return NextResponse.redirect(new URL('/admin/login', request.url));
+    }
+
+    let response = NextResponse.next({ request });
+
+    const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value }) =>
+            request.cookies.set(name, value)
+          );
+          response = NextResponse.next({ request });
+          cookiesToSet.forEach(({ name, value, options }) =>
+            response.cookies.set(name, value, options)
+          );
+        },
+      },
+    });
+
+    const { data: { session } } = await supabase.auth.getSession();
+
+    if (!session?.user) {
+      return NextResponse.redirect(new URL('/admin/login', request.url));
+    }
+
+    // Check if user exists in fundacio_admin_users table
+    if (supabaseServiceKey) {
+      const adminClient = createClient(supabaseUrl, supabaseServiceKey);
+      const { data } = await adminClient
+        .from('fundacio_admin_users')
+        .select('id')
+        .eq('auth_uid', session.user.id)
+        .single();
+
+      if (!data) {
+        return NextResponse.redirect(new URL('/admin/login?error=not_authorized', request.url));
+      }
+    }
+
+    return response;
+  }
+
+  // --- Public routes: language routing ---
   const segments = pathname.split('/').filter(Boolean);
   const firstSegment = segments[0] || '';
 

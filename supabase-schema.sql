@@ -25,6 +25,9 @@ CREATE TABLE IF NOT EXISTS fundacio_blog_posts (
   created_at timestamptz DEFAULT now()
 );
 
+-- Add created_by_email to blog posts for editor ownership
+ALTER TABLE fundacio_blog_posts ADD COLUMN IF NOT EXISTS created_by_email text;
+
 -- Donations (Stripe payment log)
 CREATE TABLE IF NOT EXISTS fundacio_donations (
   id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -48,6 +51,55 @@ CREATE TABLE IF NOT EXISTS fundacio_contact_submissions (
   created_at timestamptz DEFAULT now()
 );
 
+-- Campaigns
+CREATE TABLE IF NOT EXISTS fundacio_campaigns (
+  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  slug text UNIQUE NOT NULL,
+  name_de text NOT NULL,
+  name_en text NOT NULL,
+  name_es text NOT NULL,
+  description_de text,
+  description_en text,
+  description_es text,
+  target_amount_cents integer NOT NULL,
+  cover_image_url text,
+  active boolean DEFAULT true,
+  start_date date,
+  end_date date,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+
+-- Add campaign_id to donations
+ALTER TABLE fundacio_donations ADD COLUMN IF NOT EXISTS campaign_id bigint REFERENCES fundacio_campaigns(id);
+
+-- Campaign progress view
+CREATE OR REPLACE VIEW fundacio_campaign_progress AS
+SELECT c.*,
+  COALESCE(SUM(d.amount_cents) FILTER (WHERE d.status = 'completed'), 0) AS raised_cents,
+  CASE WHEN c.target_amount_cents > 0
+    THEN ROUND(COALESCE(SUM(d.amount_cents) FILTER (WHERE d.status = 'completed'), 0)::numeric / c.target_amount_cents * 100, 1)
+    ELSE 0
+  END AS progress_percent
+FROM fundacio_campaigns c
+LEFT JOIN fundacio_donations d ON d.campaign_id = c.id
+GROUP BY c.id;
+
+-- Admin Users (role-based access)
+CREATE TABLE IF NOT EXISTS fundacio_admin_users (
+  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  auth_uid uuid UNIQUE NOT NULL,
+  email text UNIQUE NOT NULL,
+  name text,
+  avatar_url text,
+  role text NOT NULL DEFAULT 'editor',
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+
 -- Indexes
 CREATE INDEX IF NOT EXISTS idx_fundacio_blog_posts_published ON fundacio_blog_posts(published_at DESC) WHERE active = true;
 CREATE INDEX IF NOT EXISTS idx_fundacio_donations_created ON fundacio_donations(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_fundacio_campaigns_active ON fundacio_campaigns(active) WHERE active = true;
+CREATE INDEX IF NOT EXISTS idx_fundacio_admin_users_auth_uid ON fundacio_admin_users(auth_uid);
+CREATE INDEX IF NOT EXISTS idx_fundacio_admin_users_email ON fundacio_admin_users(email);
