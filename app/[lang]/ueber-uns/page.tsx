@@ -13,7 +13,7 @@ const content = {
     team: [
       { name: 'Arnd von Wedemeyer', role: 'Gründer & Vorstand' },
       { name: 'Xenia von Wedemeyer', role: 'Vorstand' },
-      { name: 'Gabriel von Wedemeyer', role: 'Vorstand' },
+      { name: 'Gabriel Nadal Fortuny', role: 'Vorstand' },
     ],
     principlesTitle: 'Unsere Leitlinien',
     principles: [
@@ -30,7 +30,7 @@ const content = {
     team: [
       { name: 'Arnd von Wedemeyer', role: 'Founder & Board Member' },
       { name: 'Xenia von Wedemeyer', role: 'Board Member' },
-      { name: 'Gabriel von Wedemeyer', role: 'Board Member' },
+      { name: 'Gabriel Nadal Fortuny', role: 'Board Member' },
     ],
     principlesTitle: 'Our Principles',
     principles: [
@@ -47,7 +47,7 @@ const content = {
     team: [
       { name: 'Arnd von Wedemeyer', role: 'Fundador y Miembro de la Junta' },
       { name: 'Xenia von Wedemeyer', role: 'Miembro de la Junta' },
-      { name: 'Gabriel von Wedemeyer', role: 'Miembro de la Junta' },
+      { name: 'Gabriel Nadal Fortuny', role: 'Miembro de la Junta' },
     ],
     principlesTitle: 'Nuestros Principios',
     principles: [
