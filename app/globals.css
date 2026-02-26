@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  --background: #FAFAF7;
+  --background: #FFFFFF;
   --foreground: #1a1a1a;
   --text-body: #4a4a4a;
   --text-muted: #8a8a8a;
@@ -23,14 +23,19 @@ body {
   color: white;
 }
 
-/* Smooth scroll */
 html {
   scroll-behavior: smooth;
 }
 
-/* Headings default to serif */
+/* Headings: serif with refined spacing */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-libre), Georgia, serif;
+  letter-spacing: -0.015em;
+}
+
+/* Refined body text */
+p, li, span, a {
+  -webkit-font-smoothing: antialiased;
 }
 
 @layer utilities {

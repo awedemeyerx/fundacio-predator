@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Lang } from '@/lib/types';
 import { siteConfig } from '@/lib/site.config';
@@ -15,16 +16,16 @@ function LangSwitcher({ lang }: { lang: Lang }) {
   ];
 
   return (
-    <div className="flex items-center gap-1 text-sm">
+    <div className="flex items-center gap-1 text-xs tracking-wide">
       {langs.map(({ code, label }, i) => (
         <span key={code} className="flex items-center">
-          {i > 0 && <span className="text-charcoal-muted mx-1">/</span>}
+          {i > 0 && <span className="text-charcoal/20 mx-0.5">·</span>}
           <Link
             href={langUrl(code, '/')}
-            className={`transition-colors ${
+            className={`px-1 py-0.5 transition-colors ${
               code === lang
-                ? 'text-amber font-medium'
-                : 'text-charcoal-muted hover:text-charcoal'
+                ? 'text-charcoal font-medium'
+                : 'text-charcoal/40 hover:text-charcoal/70'
             }`}
           >
             {label}
@@ -39,30 +40,38 @@ export default function Header({ lang }: { lang: Lang }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-warm-white/90 backdrop-blur-md border-b border-charcoal/5">
-      <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white/85 backdrop-blur-xl border-b border-black/[0.04]">
+      <div className="max-w-6xl mx-auto px-6 h-[68px] flex items-center justify-between">
         {/* Logo */}
-        <Link href={langUrl(lang, '/')} className="flex items-center gap-3">
-          <span className="font-serif text-xl font-bold text-charcoal tracking-tight">
+        <Link href={langUrl(lang, '/')} className="flex items-center gap-2.5">
+          <Image
+            src="/images/logo.png"
+            alt="Fundació Predator"
+            width={36}
+            height={36}
+            className="rounded-lg"
+          />
+          <span className="font-serif text-lg text-charcoal">
             Fundació Predator
           </span>
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-8">
+        <nav className="hidden md:flex items-center gap-7">
           {siteConfig.nav.items.map((item) => (
             <Link
               key={item.href}
               href={langUrl(lang, item.href)}
-              className="text-sm text-charcoal-body hover:text-amber transition-colors tracking-wide uppercase"
+              className="text-[13px] text-charcoal/60 hover:text-charcoal transition-colors tracking-wide"
             >
               {item.label[lang]}
             </Link>
           ))}
+          <div className="w-px h-4 bg-charcoal/10" />
           <LangSwitcher lang={lang} />
           <Link
             href={langUrl(lang, '/spenden')}
-            className="bg-amber text-white text-sm font-medium px-5 py-2.5 rounded-full hover:bg-amber-600 transition-colors"
+            className="bg-amber text-white text-[13px] font-medium px-5 py-2 rounded-full hover:bg-amber-600 transition-all hover:shadow-md hover:shadow-amber/15"
           >
             {siteConfig.content.hero.cta[lang]}
           </Link>
@@ -71,17 +80,17 @@ export default function Header({ lang }: { lang: Lang }) {
         {/* Mobile Burger */}
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="md:hidden relative w-8 h-8 flex flex-col justify-center items-center gap-1.5"
+          className="md:hidden relative w-10 h-10 flex flex-col justify-center items-center gap-[5px] -mr-2"
           aria-label="Menu"
         >
           <span
-            className={`w-6 h-0.5 bg-charcoal transition-all ${
-              mobileOpen ? 'rotate-45 translate-y-1' : ''
+            className={`w-5 h-[1.5px] bg-charcoal transition-all duration-300 ${
+              mobileOpen ? 'rotate-45 translate-y-[3.25px]' : ''
             }`}
           />
           <span
-            className={`w-6 h-0.5 bg-charcoal transition-all ${
-              mobileOpen ? '-rotate-45 -translate-y-1' : ''
+            className={`w-5 h-[1.5px] bg-charcoal transition-all duration-300 ${
+              mobileOpen ? '-rotate-45 -translate-y-[3.25px]' : ''
             }`}
           />
         </button>
@@ -94,26 +103,27 @@ export default function Header({ lang }: { lang: Lang }) {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-warm-white border-b border-charcoal/5 overflow-hidden"
+            transition={{ duration: 0.25, ease: 'easeInOut' }}
+            className="md:hidden bg-white border-b border-black/[0.04] overflow-hidden"
           >
-            <nav className="max-w-6xl mx-auto px-6 py-6 flex flex-col gap-4">
+            <nav className="max-w-6xl mx-auto px-6 py-8 flex flex-col gap-5">
               {siteConfig.nav.items.map((item) => (
                 <Link
                   key={item.href}
                   href={langUrl(lang, item.href)}
                   onClick={() => setMobileOpen(false)}
-                  className="text-lg text-charcoal-body hover:text-amber transition-colors"
+                  className="text-[17px] text-charcoal/70 hover:text-amber transition-colors"
                 >
                   {item.label[lang]}
                 </Link>
               ))}
-              <div className="pt-2 border-t border-charcoal/5">
+              <div className="pt-3 border-t border-charcoal/5">
                 <LangSwitcher lang={lang} />
               </div>
               <Link
                 href={langUrl(lang, '/spenden')}
                 onClick={() => setMobileOpen(false)}
-                className="bg-amber text-white text-center font-medium px-5 py-3 rounded-full hover:bg-amber-600 transition-colors mt-2"
+                className="bg-amber text-white text-center font-medium px-5 py-3.5 rounded-full hover:bg-amber-600 transition-colors mt-1"
               >
                 {siteConfig.content.hero.cta[lang]}
               </Link>

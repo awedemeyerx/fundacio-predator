@@ -65,10 +65,10 @@ const sectionTitle = {
 
 export default function MissionSection({ lang }: { lang: Lang }) {
   return (
-    <section className="py-20 sm:py-28 bg-warm-white">
+    <section className="py-20 sm:py-28 bg-white">
       <div className="max-w-6xl mx-auto px-6">
         <FadeIn>
-          <p className="text-xs uppercase tracking-[0.25em] text-forest font-medium mb-4 text-center">
+          <p className="text-[11px] uppercase tracking-[0.3em] text-forest font-medium mb-4 text-center">
             {sectionTitle[lang]}
           </p>
         </FadeIn>

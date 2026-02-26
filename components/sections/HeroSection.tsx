@@ -10,79 +10,84 @@ export default function HeroSection({ lang }: { lang: Lang }) {
   const { hero } = siteConfig.content;
 
   return (
-    <section className="relative min-h-[90vh] flex items-center overflow-hidden">
-      {/* Background — warm gradient with subtle texture */}
-      <div className="absolute inset-0 bg-gradient-to-br from-warm-sand via-warm-white to-warm-white" />
+    <section className="relative min-h-[92vh] flex items-center overflow-hidden bg-white">
+      {/* Subtle oval gradient — warm glow, not beige */}
       <div
-        className="absolute inset-0 opacity-[0.03]"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[140%] h-[120%] pointer-events-none"
         style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231a1a1a' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          background:
+            'radial-gradient(ellipse 60% 50% at 50% 45%, rgba(232,114,42,0.04) 0%, rgba(45,143,111,0.02) 40%, transparent 70%)',
+        }}
+      />
+      {/* Secondary accent glow */}
+      <div
+        className="absolute top-[15%] right-[10%] w-[500px] h-[500px] pointer-events-none"
+        style={{
+          background:
+            'radial-gradient(circle, rgba(45,143,111,0.03) 0%, transparent 60%)',
         }}
       />
 
-      {/* Decorative accent line */}
-      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber via-gold to-forest" />
+      {/* Top accent line */}
+      <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-amber to-transparent opacity-40" />
 
-      <div className="relative max-w-6xl mx-auto px-6 pt-24 pb-16">
+      <div className="relative max-w-6xl mx-auto px-6 pt-28 pb-20">
         <div className="max-w-3xl">
           {/* Overline */}
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-xs uppercase tracking-[0.25em] text-amber font-medium mb-6"
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="text-[11px] uppercase tracking-[0.3em] text-forest font-medium mb-8"
           >
             {siteConfig.brand.tagline[lang]}
           </motion.p>
 
-          {/* Headline */}
+          {/* Headline — larger, more dramatic */}
           <motion.h1
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.3 }}
-            className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-charcoal leading-tight text-balance mb-8"
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="font-serif text-[2.75rem] sm:text-[3.5rem] lg:text-[4.25rem] font-bold text-charcoal leading-[1.08] text-balance mb-7"
           >
             {hero.headline[lang]}
           </motion.h1>
 
-          {/* Subtitle */}
+          {/* Subtitle — lighter weight, more breathing room */}
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.5 }}
-            className="text-lg sm:text-xl text-charcoal-body leading-relaxed max-w-2xl mb-10"
+            transition={{ duration: 0.6, delay: 0.5 }}
+            className="text-[17px] sm:text-lg text-charcoal-body/80 leading-relaxed max-w-xl mb-11 font-light"
           >
             {hero.subtitle[lang]}
           </motion.p>
 
           {/* CTAs */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.7 }}
+            transition={{ duration: 0.6, delay: 0.65 }}
             className="flex flex-col sm:flex-row gap-4"
           >
             <Link
               href={langUrl(lang, '/spenden')}
-              className="inline-flex items-center justify-center bg-amber text-white font-medium px-8 py-4 rounded-full text-lg hover:bg-amber-600 transition-all hover:shadow-lg hover:shadow-amber/20"
+              className="inline-flex items-center justify-center bg-amber text-white font-medium px-8 py-[14px] rounded-full text-[15px] hover:bg-amber-600 transition-all hover:shadow-lg hover:shadow-amber/20 active:scale-[0.98]"
             >
               {hero.cta[lang]}
-              <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
             </Link>
             <Link
               href={langUrl(lang, '/projekte')}
-              className="inline-flex items-center justify-center border-2 border-charcoal/15 text-charcoal font-medium px-8 py-4 rounded-full text-lg hover:border-charcoal/30 transition-all"
+              className="inline-flex items-center justify-center border border-charcoal/12 text-charcoal/70 font-medium px-8 py-[14px] rounded-full text-[15px] hover:border-charcoal/25 hover:text-charcoal transition-all"
             >
               {hero.secondaryCta[lang]}
             </Link>
           </motion.div>
         </div>
       </div>
-
-      {/* Bottom fade */}
-      <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-warm-white to-transparent" />
     </section>
   );
 }

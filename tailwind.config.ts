@@ -13,8 +13,8 @@ const config: Config = {
       },
       colors: {
         warm: {
-          white: '#FAFAF7',
-          sand: '#F5EDE3',
+          white: '#FFFFFF',
+          sand: '#F7F3EE',
         },
         charcoal: {
           DEFAULT: '#1a1a1a',
