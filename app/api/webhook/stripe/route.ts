@@ -47,6 +47,17 @@ export async function POST(request: NextRequest) {
       // Log donation to Supabase
       if (supabaseAdmin) {
         try {
+          // Resolve campaign_id from slug if provided
+          let campaignId = null;
+          if (metadata.campaign) {
+            const { data: campaignData } = await supabaseAdmin
+              .from('fundacio_campaigns')
+              .select('id')
+              .eq('slug', metadata.campaign)
+              .single();
+            if (campaignData) campaignId = campaignData.id;
+          }
+
           await supabaseAdmin.from('fundacio_donations').insert({
             stripe_session_id: session.id,
             amount_cents: session.amount_total || 0,
@@ -54,6 +65,7 @@ export async function POST(request: NextRequest) {
             donor_name: session.customer_details?.name || null,
             donor_email: session.customer_details?.email || null,
             project: metadata.project !== 'general' ? metadata.project : null,
+            campaign_id: campaignId,
             status: 'completed',
           });
           console.log('Donation logged to Supabase:', session.id);

@@ -14,7 +14,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://fundaciopredator.o
 
 export async function POST(request: NextRequest) {
   try {
-    const { amount, project, lang } = await request.json();
+    const { amount, project, lang, campaign } = await request.json();
 
     if (!amount || amount < 1) {
       return NextResponse.json({ error: 'Invalid amount' }, { status: 400 });
@@ -52,6 +52,7 @@ export async function POST(request: NextRequest) {
         type: 'donation',
         project: project || 'general',
         lang: langKey,
+        ...(campaign ? { campaign } : {}),
       },
       success_url: `${BASE_URL}${langKey === 'de' ? '' : `/${langKey}`}/spenden?donation=success&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${BASE_URL}${langKey === 'de' ? '' : `/${langKey}`}/spenden?donation=cancelled`,

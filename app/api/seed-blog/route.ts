@@ -735,12 +735,22 @@ export async function POST() {
     return NextResponse.json({ error: 'Supabase not configured' }, { status: 500 });
   }
 
+  // DELETE all existing posts before re-seeding to avoid duplicates
+  const { error: deleteError } = await supabaseAdmin
+    .from('fundacio_blog_posts')
+    .delete()
+    .neq('id', 0); // delete all rows
+
+  if (deleteError) {
+    return NextResponse.json({ error: 'Failed to clear existing posts: ' + deleteError.message }, { status: 500 });
+  }
+
   const results = [];
 
   for (const post of posts) {
-    const { data, error } = await supabaseAdmin
+    const { error } = await supabaseAdmin
       .from('fundacio_blog_posts')
-      .upsert(post, { onConflict: 'slug_de' })
+      .insert(post)
       .select();
 
     if (error) {
@@ -750,5 +760,5 @@ export async function POST() {
     }
   }
 
-  return NextResponse.json({ results, total: posts.length });
+  return NextResponse.json({ results, total: posts.length, cleared: true });
 }

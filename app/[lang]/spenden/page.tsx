@@ -1,11 +1,20 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Lang } from '@/lib/types';
 import { siteConfig } from '@/lib/site.config';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import FadeIn from '@/components/ui/FadeIn';
+import ProgressBar from '@/components/ui/ProgressBar';
+
+interface CampaignInfo {
+  name: string;
+  slug: string;
+  raised_cents: number;
+  target_amount_cents: number;
+}
 
 const content = {
   de: {
@@ -47,15 +56,46 @@ const content = {
 };
 
 export default function SpendenPage({ params }: { params: { lang: string } }) {
+  return (
+    <Suspense>
+      <SpendenContent params={params} />
+    </Suspense>
+  );
+}
+
+function SpendenContent({ params }: { params: { lang: string } }) {
   const lang = (params.lang as Lang) || 'de';
   const c = content[lang];
   const amounts = siteConfig.content.donate.amounts;
   const projects = siteConfig.content.projects.items;
+  const searchParams = useSearchParams();
+  const campaignSlug = searchParams.get('campaign');
 
   const [selectedAmount, setSelectedAmount] = useState<number | null>(50);
   const [customAmount, setCustomAmount] = useState('');
   const [selectedProject, setSelectedProject] = useState('general');
   const [loading, setLoading] = useState(false);
+  const [campaignInfo, setCampaignInfo] = useState<CampaignInfo | null>(null);
+
+  useEffect(() => {
+    if (campaignSlug) {
+      fetch(`/api/admin/campaigns`)
+        .then(r => r.json())
+        .then(data => {
+          const campaigns = data.campaigns || [];
+          const found = campaigns.find((c: { slug: string }) => c.slug === campaignSlug);
+          if (found) {
+            setCampaignInfo({
+              name: found[`name_${lang}`] || found.name_de,
+              slug: found.slug,
+              raised_cents: 0,
+              target_amount_cents: found.target_amount_cents,
+            });
+          }
+        })
+        .catch(() => {});
+    }
+  }, [campaignSlug, lang]);
 
   const finalAmount = selectedAmount || parseInt(customAmount) || 0;
 
@@ -71,6 +111,7 @@ export default function SpendenPage({ params }: { params: { lang: string } }) {
           amount: finalAmount,
           project: selectedProject === 'general' ? null : selectedProject,
           lang,
+          campaign: campaignSlug || undefined,
         }),
       });
       const data = await res.json();
@@ -105,6 +146,21 @@ export default function SpendenPage({ params }: { params: { lang: string } }) {
               <p className="text-lg text-charcoal-body">{c.subtitle}</p>
             </div>
           </FadeIn>
+
+          {/* Campaign Progress Banner */}
+          {campaignInfo && (
+            <FadeIn delay={0.05}>
+              <div className="bg-amber/5 border border-amber/20 rounded-2xl p-6 mb-6">
+                <p className="text-sm font-medium text-amber mb-3">
+                  {lang === 'de' ? 'Spende für Kampagne:' : lang === 'es' ? 'Donación para campaña:' : 'Donation for campaign:'} {campaignInfo.name}
+                </p>
+                <ProgressBar
+                  raisedCents={campaignInfo.raised_cents}
+                  targetCents={campaignInfo.target_amount_cents}
+                />
+              </div>
+            </FadeIn>
+          )}
 
           <FadeIn delay={0.1}>
             <div className="bg-white rounded-2xl shadow-sm border border-charcoal/5 p-8">
