@@ -11,9 +11,28 @@ interface BlogContentProps {
  * Renders blog HTML content, replacing <img> tags with optimized Next.js Image components.
  * Splits content at img tags and renders them as separate optimized images.
  */
+// WordPress boilerplate that was imported into post bodies — strip it
+const BOILERPLATE_MARKERS = [
+  '<h2>Was machen wir anders?</h2>',
+  '<h2>What do we do differently?</h2>',
+  '<h2>¿Qué hacemos de forma diferente?</h2>',
+];
+
+function stripBoilerplate(content: string): string {
+  for (const marker of BOILERPLATE_MARKERS) {
+    const idx = content.indexOf(marker);
+    if (idx !== -1) {
+      return content.slice(0, idx).trim();
+    }
+  }
+  return content;
+}
+
 export default function BlogContent({ html }: BlogContentProps) {
   const parts = useMemo(() => {
     if (!html) return [];
+
+    const cleaned = stripBoilerplate(html);
 
     // Split content at <img ...> tags
     const imgRegex = /<img\s+[^>]*>/gi;
@@ -21,10 +40,10 @@ export default function BlogContent({ html }: BlogContentProps) {
     let lastIndex = 0;
     let match;
 
-    while ((match = imgRegex.exec(html)) !== null) {
+    while ((match = imgRegex.exec(cleaned)) !== null) {
       // Add HTML before this image
       if (match.index > lastIndex) {
-        segments.push({ type: 'html', content: html.slice(lastIndex, match.index) });
+        segments.push({ type: 'html', content: cleaned.slice(lastIndex, match.index) });
       }
 
       // Extract src and alt from img tag
@@ -44,8 +63,8 @@ export default function BlogContent({ html }: BlogContentProps) {
     }
 
     // Add remaining HTML
-    if (lastIndex < html.length) {
-      segments.push({ type: 'html', content: html.slice(lastIndex) });
+    if (lastIndex < cleaned.length) {
+      segments.push({ type: 'html', content: cleaned.slice(lastIndex) });
     }
 
     return segments;
@@ -55,7 +74,7 @@ export default function BlogContent({ html }: BlogContentProps) {
 
   // If no images found, render as plain HTML
   if (parts.length === 0 || (parts.length === 1 && parts[0].type === 'html')) {
-    return <div dangerouslySetInnerHTML={{ __html: html }} />;
+    return <div dangerouslySetInnerHTML={{ __html: stripBoilerplate(html) }} />;
   }
 
   return (
