@@ -1,10 +1,17 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Lang } from '@/lib/types';
 import { siteConfig } from '@/lib/site.config';
 import { langUrl } from '@/lib/hreflang';
+
+const heroImages = [
+  { src: '/images/projects/educaclowns/educaclowns-2.jpg', alt: 'EducaClowns', rotate: '-3deg', top: '8%', right: '2%', width: 340, height: 227 },
+  { src: '/images/projects/sos-mamas/sos-mamas-1.webp', alt: 'SOS Mamás', rotate: '2.5deg', top: '38%', right: '12%', width: 300, height: 200 },
+  { src: '/images/about/girl-with-heart.webp', alt: 'Fundació Predator', rotate: '-1.5deg', top: '62%', right: '0%', width: 280, height: 187 },
+];
 
 export default function HeroSection({ lang }: { lang: Lang }) {
   const { hero } = siteConfig.content;
@@ -27,6 +34,30 @@ export default function HeroSection({ lang }: { lang: Lang }) {
             'radial-gradient(circle, rgba(45,143,111,0.03) 0%, transparent 60%)',
         }}
       />
+
+      {/* Photo collage — desktop only */}
+      <div className="hidden lg:block absolute inset-0 pointer-events-none">
+        {heroImages.map((img, i) => (
+          <motion.div
+            key={img.src}
+            initial={{ opacity: 0, scale: 0.92 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1, delay: 0.6 + i * 0.2 }}
+            className="absolute"
+            style={{ top: img.top, right: img.right, rotate: img.rotate }}
+          >
+            <div className="rounded-xl overflow-hidden shadow-lg shadow-charcoal/5 opacity-[0.18] hover:opacity-[0.35] transition-opacity duration-700">
+              <Image
+                src={img.src}
+                alt={img.alt}
+                width={img.width}
+                height={img.height}
+                className="object-cover"
+              />
+            </div>
+          </motion.div>
+        ))}
+      </div>
 
       {/* Top accent line */}
       <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-amber to-transparent opacity-40" />

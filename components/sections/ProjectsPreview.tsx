@@ -1,10 +1,17 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { Lang } from '@/lib/types';
 import { siteConfig } from '@/lib/site.config';
 import { langUrl } from '@/lib/hreflang';
 import FadeIn from '@/components/ui/FadeIn';
+
+const projectCovers: Record<string, string> = {
+  educaclowns: '/images/projects/educaclowns/educaclowns-1.jpg',
+  pollenca: '/images/projects/pollenca/pollenca-1.webp',
+  'sos-mamas': '/images/projects/sos-mamas/sos-mamas-1.webp',
+};
 
 export default function ProjectsPreview({ lang }: { lang: Lang }) {
   const { projects } = siteConfig.content;
@@ -39,9 +46,17 @@ export default function ProjectsPreview({ lang }: { lang: Lang }) {
                 href={langUrl(lang, `/projekte/${project.slug}`)}
                 className="group block bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500"
               >
-                {/* Image placeholder */}
-                <div className="aspect-[4/3] bg-gradient-to-br from-charcoal/[0.03] to-charcoal/[0.06] relative overflow-hidden">
-                  <div className="absolute inset-0 bg-amber/[0.04] group-hover:bg-amber/[0.08] transition-colors" />
+                <div className="aspect-[4/3] relative overflow-hidden bg-charcoal/[0.03]">
+                  {projectCovers[project.slug] && (
+                    <Image
+                      src={projectCovers[project.slug]}
+                      alt={project.title[lang]}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                    />
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
                   <div className="absolute bottom-4 left-4">
                     <span className="bg-forest text-white text-xs uppercase tracking-wider px-3 py-1.5 rounded-full font-medium">
                       {project.title[lang]}
