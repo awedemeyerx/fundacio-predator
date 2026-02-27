@@ -18,14 +18,37 @@ const BOILERPLATE_MARKERS = [
   '<h2>¿Qué hacemos de forma diferente?</h2>',
 ];
 
+// Donation CTA boilerplate appended to every old WordPress post
+const DONATION_CTA_MARKERS = [
+  '<h2>Hilf uns mit Deiner Spende,</h2>',
+  '<h2>Help us with your donation,</h2>',
+  '<h2>Ayúdanos con tu donación,</h2>',
+  '<h2>Jetzt online spenden!</h2>',
+  '<h2>Donate online now!</h2>',
+];
+
 function stripBoilerplate(content: string): string {
-  for (const marker of BOILERPLATE_MARKERS) {
-    const idx = content.indexOf(marker);
+  let result = content;
+
+  // Strip donation CTA boilerplate first (appears at end of posts)
+  for (const marker of DONATION_CTA_MARKERS) {
+    const idx = result.indexOf(marker);
     if (idx !== -1) {
-      return content.slice(0, idx).trim();
+      result = result.slice(0, idx).trim();
+      break;
     }
   }
-  return content;
+
+  // Strip "Was machen wir anders" boilerplate
+  for (const marker of BOILERPLATE_MARKERS) {
+    const idx = result.indexOf(marker);
+    if (idx !== -1) {
+      result = result.slice(0, idx).trim();
+      break;
+    }
+  }
+
+  return result;
 }
 
 export default function BlogContent({ html }: BlogContentProps) {

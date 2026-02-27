@@ -25,6 +25,7 @@ export async function POST(request: NextRequest) {
       educaclowns: 'EducaClowns',
       pollenca: 'Pollença',
       'sos-mamas': 'SOS Mamás',
+      blog: 'Blog',
     };
     const projectLabel = project ? projectNames[project] || project : null;
 
