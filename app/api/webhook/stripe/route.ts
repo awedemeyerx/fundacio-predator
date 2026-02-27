@@ -135,6 +135,7 @@ export async function POST(request: NextRequest) {
             amount: (session.amount_total || 0) / 100,
             project: metadata.project,
             lang: (metadata.lang as 'de' | 'en' | 'es') || 'de',
+            sessionId: session.id,
           });
           console.log('Confirmation email sent to:', confirmEmail);
         } catch (emailError) {

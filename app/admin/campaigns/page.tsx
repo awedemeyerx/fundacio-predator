@@ -46,7 +46,7 @@ export default function AdminCampaignsPage() {
   }, []);
 
   async function handleDelete(id: number) {
-    if (!confirm('Diese Kampagne wirklich löschen?')) return;
+    if (!confirm('Dieses Projekt wirklich löschen?')) return;
     await fetch(`/api/admin/campaigns/${id}`, { method: 'DELETE' });
     setCampaigns(campaigns.filter(c => c.id !== id));
   }
@@ -123,13 +123,13 @@ export default function AdminCampaignsPage() {
       <AdminSidebar />
       <div className="flex-1">
         <AdminHeader
-          title="Kampagnen"
+          title="Projekte"
           action={
             <Link
               href="/admin/campaigns/new"
               className="bg-amber text-white text-sm font-medium px-4 py-2 rounded-full hover:bg-amber-600 transition-all"
             >
-              + Kampagne erstellen
+              + Neues Projekt
             </Link>
           }
         />
@@ -137,7 +137,7 @@ export default function AdminCampaignsPage() {
           {loading ? (
             <p className="text-charcoal-muted text-sm">Loading...</p>
           ) : (
-            <DataTable columns={columns} data={campaigns} emptyMessage="Noch keine Kampagnen" />
+            <DataTable columns={columns} data={campaigns} emptyMessage="Noch keine Projekte" />
           )}
         </div>
       </div>

@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
         lang: langKey,
         ...(campaign ? { campaign } : {}),
       },
-      success_url: `${BASE_URL}${langKey === 'de' ? '' : `/${langKey}`}/spenden?donation=success&session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${BASE_URL}${langKey === 'de' ? '' : `/${langKey}`}/spenden/danke?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${BASE_URL}${langKey === 'de' ? '' : `/${langKey}`}/spenden?donation=cancelled`,
       locale: langKey === 'de' ? 'de' : langKey === 'es' ? 'es' : 'en',
       submit_type: 'donate',

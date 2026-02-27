@@ -46,7 +46,7 @@ export default function AdminDonationsPage() {
 
     if (campaignFilter !== 'all') {
       if (campaignFilter === 'none') {
-        result = result.filter(d => !d.campaign_id);
+        result = result.filter(d => !d.campaign_id && !d.project);
       } else {
         result = result.filter(d => d.campaign_id === Number(campaignFilter));
       }
@@ -88,18 +88,21 @@ export default function AdminDonationsPage() {
       render: (d: Donation) => `${(d.amount_cents / 100).toFixed(2)} ${(d.currency || 'eur').toUpperCase()}`,
     },
     {
-      key: 'campaign_id',
-      label: 'Kampagne',
-      render: (d: Donation) => {
-        if (!d.campaign_id) return <span className="text-charcoal-muted">-</span>;
-        const c = campaigns.find(c => c.id === d.campaign_id);
-        return c?.name_de || `#${d.campaign_id}`;
-      },
-    },
-    {
       key: 'project',
       label: 'Projekt',
-      render: (d: Donation) => d.project || '-',
+      render: (d: Donation) => {
+        const projectLabels: Record<string, string> = {
+          educaclowns: 'EducaClowns',
+          pollenca: 'Pollença',
+          'sos-mamas': 'SOS Mamás',
+        };
+        if (d.project) return projectLabels[d.project] || d.project;
+        if (d.campaign_id) {
+          const c = campaigns.find(c => c.id === d.campaign_id);
+          return c?.name_de || `#${d.campaign_id}`;
+        }
+        return <span className="text-charcoal-muted">-</span>;
+      },
     },
     {
       key: 'status',
@@ -135,8 +138,8 @@ export default function AdminDonationsPage() {
               onChange={(e) => setCampaignFilter(e.target.value)}
               className="px-3 py-2 border border-charcoal/10 rounded-lg text-sm bg-white text-charcoal focus:outline-none focus:ring-2 focus:ring-amber/30"
             >
-              <option value="all">Alle Kampagnen</option>
-              <option value="none">Ohne Kampagne</option>
+              <option value="all">Alle Projekte</option>
+              <option value="none">Ohne Projekt</option>
               {campaigns.map(c => (
                 <option key={c.id} value={c.id}>{c.name_de}</option>
               ))}

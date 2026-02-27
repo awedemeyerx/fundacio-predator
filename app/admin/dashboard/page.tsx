@@ -81,7 +81,7 @@ export default function DashboardPage() {
             {isAdmin && (
               <>
                 <StatsCard label="Spenden" value={stats.donations} sub={`${(stats.totalRaised / 100).toFixed(2)} EUR`} href="/admin/donations" />
-                <StatsCard label="Kampagnen" value={stats.campaigns} href="/admin/campaigns" />
+                <StatsCard label="Projekte" value={stats.campaigns} href="/admin/campaigns" />
                 <StatsCard label="Kontakte" value={stats.contacts} href="/admin/contacts" />
               </>
             )}

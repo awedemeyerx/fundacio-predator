@@ -146,7 +146,7 @@ function SpendenContent({ params }: { params: { lang: string } }) {
             <FadeIn delay={0.05}>
               <div className="bg-amber/5 border border-amber/20 rounded-2xl p-6 mb-6">
                 <p className="text-sm font-medium text-amber mb-3">
-                  {lang === 'de' ? 'Spende für Kampagne:' : lang === 'es' ? 'Donación para campaña:' : 'Donation for campaign:'} {campaignInfo.name}
+                  {lang === 'de' ? 'Spende für Projekt:' : lang === 'es' ? 'Donación para proyecto:' : 'Donation for project:'} {campaignInfo.name}
                 </p>
                 <ProgressBar
                   raisedCents={campaignInfo.raised_cents}

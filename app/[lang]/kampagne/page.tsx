@@ -11,9 +11,9 @@ import { getActiveCampaigns, getLocalizedCampaign } from '@/lib/campaigns';
 export const revalidate = 300;
 
 const pageContent = {
-  de: { title: 'Unsere Kampagnen', subtitle: 'Unterstütze gezielt eines unserer aktuellen Projekte.' },
-  en: { title: 'Our Campaigns', subtitle: 'Support one of our current projects directly.' },
-  es: { title: 'Nuestras Campañas', subtitle: 'Apoya directamente uno de nuestros proyectos actuales.' },
+  de: { title: 'Unsere Projekte', subtitle: 'Unterstütze gezielt eines unserer aktuellen Projekte.' },
+  en: { title: 'Our Projects', subtitle: 'Support one of our current projects directly.' },
+  es: { title: 'Nuestros Proyectos', subtitle: 'Apoya directamente uno de nuestros proyectos actuales.' },
 };
 
 export default async function CampaignsPage({
@@ -32,7 +32,7 @@ export default async function CampaignsPage({
         <div className="max-w-6xl mx-auto px-6">
           <FadeIn>
             <p className="text-[11px] uppercase tracking-[0.3em] text-forest font-medium mb-4">
-              {lang === 'de' ? 'Kampagnen' : lang === 'es' ? 'Campañas' : 'Campaigns'}
+              {lang === 'de' ? 'Projekte' : lang === 'es' ? 'Proyectos' : 'Projects'}
             </p>
             <h1 className="font-serif text-4xl sm:text-5xl font-bold text-charcoal mb-4 leading-tight">
               {c.title}
@@ -45,7 +45,7 @@ export default async function CampaignsPage({
           {campaigns.length === 0 ? (
             <FadeIn delay={0.1}>
               <div className="text-center py-20 text-charcoal-muted">
-                <p>{lang === 'de' ? 'Aktuell keine aktiven Kampagnen.' : lang === 'es' ? 'Actualmente sin campañas activas.' : 'No active campaigns at this time.'}</p>
+                <p>{lang === 'de' ? 'Aktuell keine aktiven Projekte.' : lang === 'es' ? 'Actualmente sin proyectos activos.' : 'No active projects at this time.'}</p>
               </div>
             </FadeIn>
           ) : (

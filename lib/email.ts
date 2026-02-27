@@ -8,6 +8,7 @@ interface DonationEmailParams {
   amount: number;
   project: string | null;
   lang: Lang;
+  sessionId?: string;
 }
 
 interface ContactEmailParams {
@@ -24,7 +25,9 @@ const donationSubject: Record<Lang, string> = {
 };
 
 function generateDonationEmailHtml(params: DonationEmailParams): string {
-  const { name, amount, project, lang } = params;
+  const { name, amount, project, lang, sessionId } = params;
+  const BASE_URL = 'https://fundaciopredator.org';
+  const dankeUrl = sessionId ? `${BASE_URL}/${lang === 'de' ? '' : `${lang}/`}spenden/danke?session_id=${sessionId}` : null;
   const projectNames: Record<string, string> = {
     educaclowns: 'EducaClowns',
     pollenca: 'Pollença',
@@ -40,6 +43,8 @@ function generateDonationEmailHtml(params: DonationEmailParams): string {
       project: projectLabel ? `Für das Projekt: ${projectLabel}` : 'Allgemeine Spende',
       promise: '100% deiner Spende fließt direkt in unsere Projekte. Alle Verwaltungskosten werden privat getragen.',
       receipt: 'Du erhältst eine Spendenquittung per E-Mail.',
+      ctaButton: 'Daten ergänzen für Spendenquittung',
+      ctaHint: 'Möchtest du über unsere Arbeit informiert werden? Ergänze deine Daten auf unserer Webseite.',
       signature: 'Herzliche Grüße',
     },
     en: {
@@ -49,6 +54,8 @@ function generateDonationEmailHtml(params: DonationEmailParams): string {
       project: projectLabel ? `For the project: ${projectLabel}` : 'General donation',
       promise: '100% of your donation goes directly to our projects. All administrative costs are covered privately.',
       receipt: 'You will receive a donation receipt via email.',
+      ctaButton: 'Complete details for donation receipt',
+      ctaHint: 'Would you like to stay informed about our work? Complete your details on our website.',
       signature: 'Kind regards',
     },
     es: {
@@ -58,11 +65,19 @@ function generateDonationEmailHtml(params: DonationEmailParams): string {
       project: projectLabel ? `Para el proyecto: ${projectLabel}` : 'Donación general',
       promise: 'El 100% de tu donación va directamente a nuestros proyectos. Todos los costes administrativos se cubren de forma privada.',
       receipt: 'Recibirás un recibo de donación por correo electrónico.',
+      ctaButton: 'Completa tus datos para el recibo de donación',
+      ctaHint: '¿Te gustaría estar informado sobre nuestro trabajo? Completa tus datos en nuestra web.',
       signature: 'Cordiales saludos',
     },
   };
 
   const t = texts[lang];
+
+  const ctaHtml = dankeUrl ? `
+              <div style="margin:20px 0;text-align:center;">
+                <a href="${dankeUrl}" style="display:inline-block;background:#E8722A;color:#fff;font-size:15px;font-weight:600;text-decoration:none;padding:14px 28px;border-radius:99px;">${t.ctaButton}</a>
+              </div>
+              <p style="margin:0;color:#8a8a8a;font-size:13px;text-align:center;">${t.ctaHint}</p>` : '';
 
   return `
 <!DOCTYPE html>
@@ -73,7 +88,7 @@ function generateDonationEmailHtml(params: DonationEmailParams): string {
     <tr><td align="center">
       <table width="100%" style="max-width:520px;">
         <tr><td style="text-align:center;padding:0 0 24px;">
-          <h1 style="margin:0;font-size:20px;color:#1a1a1a;font-family:Georgia,serif;">Fundació Predator</h1>
+          <img src="https://fundaciopredator.org/images/logo.png" width="180" alt="Fundació Predator" style="display:block;margin:0 auto;" />
         </td></tr>
         <tr><td>
           <table width="100%" style="background:#fff;border-radius:16px;border:1px solid #e5e5e5;">
@@ -91,7 +106,7 @@ function generateDonationEmailHtml(params: DonationEmailParams): string {
               </table>
               <div style="margin:20px 0;padding:16px;background:#C9963B10;border-left:3px solid #C9963B;border-radius:0 8px 8px 0;">
                 <p style="margin:0;color:#4a4a4a;font-size:14px;">${t.promise}</p>
-              </div>
+              </div>${ctaHtml}
               <p style="margin:16px 0 0;color:#8a8a8a;font-size:13px;">${t.receipt}</p>
             </td></tr>
             <tr><td style="padding:24px;border-top:1px solid #f0f0f0;text-align:center;">
@@ -101,7 +116,13 @@ function generateDonationEmailHtml(params: DonationEmailParams): string {
           </table>
         </td></tr>
         <tr><td style="padding:24px 0 0;text-align:center;">
-          <p style="margin:0;color:#8a8a8a;font-size:11px;">© ${new Date().getFullYear()} Fundació Predator · Mallorca</p>
+          <p style="margin:0 0 4px;color:#8a8a8a;font-size:11px;">Fundació Predator · CIF: G09676479</p>
+          <p style="margin:0 0 4px;color:#8a8a8a;font-size:11px;">C/ Vicari Joaquim Fuster, 31 · 07006 Palma, Illes Balears, España</p>
+          <p style="margin:0 0 4px;color:#8a8a8a;font-size:11px;">info@fundaciopredator.org</p>
+          <p style="margin:0;color:#8a8a8a;font-size:11px;">
+            <a href="https://fundaciopredator.org/impressum" style="color:#8a8a8a;">Impressum</a> · <a href="https://fundaciopredator.org/datenschutz" style="color:#8a8a8a;">Datenschutz</a>
+          </p>
+          <p style="margin:8px 0 0;color:#b0b0b0;font-size:10px;">© ${new Date().getFullYear()} Fundació Predator</p>
         </td></tr>
       </table>
     </td></tr>

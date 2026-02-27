@@ -23,7 +23,7 @@ export default async function CampaignDetailPage({
 
   const campaign = getLocalizedCampaign(rawCampaign, lang);
 
-  const donateLabel = lang === 'de' ? 'Für diese Kampagne spenden' : lang === 'es' ? 'Donar a esta campaña' : 'Donate to this campaign';
+  const donateLabel = lang === 'de' ? 'Für dieses Projekt spenden' : lang === 'es' ? 'Donar a este proyecto' : 'Donate to this project';
 
   return (
     <>
@@ -36,7 +36,7 @@ export default async function CampaignDetailPage({
               <Link href={langUrl(lang, '/')} className="hover:text-amber transition-colors">Home</Link>
               <span className="mx-2 text-charcoal/20">/</span>
               <Link href={langUrl(lang, '/kampagne')} className="hover:text-amber transition-colors">
-                {lang === 'de' ? 'Kampagnen' : lang === 'es' ? 'Campañas' : 'Campaigns'}
+                {lang === 'de' ? 'Projekte' : lang === 'es' ? 'Proyectos' : 'Projects'}
               </Link>
               <span className="mx-2 text-charcoal/20">/</span>
               <span className="text-charcoal/50">{campaign.name}</span>
@@ -112,7 +112,7 @@ export default async function CampaignDetailPage({
                 <svg className="w-4 h-4 mr-2 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
-                {lang === 'de' ? 'Alle Kampagnen' : lang === 'es' ? 'Todas las campañas' : 'All campaigns'}
+                {lang === 'de' ? 'Alle Projekte' : lang === 'es' ? 'Todos los proyectos' : 'All projects'}
               </Link>
             </div>
           </FadeIn>

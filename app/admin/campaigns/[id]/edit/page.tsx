@@ -23,7 +23,7 @@ export default function EditCampaignPage({ params }: { params: { id: string } })
     <div className="flex min-h-screen bg-warm-sand">
       <AdminSidebar />
       <div className="flex-1">
-        <AdminHeader title="Kampagne bearbeiten" />
+        <AdminHeader title="Projekt bearbeiten" />
         <div className="p-8">
           {loading ? (
             <p className="text-charcoal-muted text-sm">Loading...</p>

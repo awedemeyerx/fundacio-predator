@@ -9,7 +9,7 @@ export default function NewCampaignPage() {
     <div className="flex min-h-screen bg-warm-sand">
       <AdminSidebar />
       <div className="flex-1">
-        <AdminHeader title="Neue Kampagne" />
+        <AdminHeader title="Neues Projekt" />
         <div className="p-8">
           <CampaignForm />
         </div>
