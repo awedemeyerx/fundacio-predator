@@ -309,6 +309,15 @@ export default function BlogPostForm({ post }: BlogPostFormProps) {
           </div>
           {/* Translation buttons */}
           <div className="flex items-center gap-2">
+            {translating && (
+              <div className="flex items-center gap-2 text-amber text-xs font-medium">
+                <svg className="animate-spin h-3.5 w-3.5" viewBox="0 0 24 24" fill="none">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+                Übersetze...
+              </div>
+            )}
             {otherLangs(activeLang).map(source => (
               <button
                 key={source}
@@ -317,7 +326,7 @@ export default function BlogPostForm({ post }: BlogPostFormProps) {
                 onClick={() => handleTranslateAll(source, activeLang)}
                 className="px-3 py-1.5 bg-amber/10 text-amber text-xs font-medium rounded-md hover:bg-amber/20 border border-amber/20 transition-colors disabled:opacity-50 disabled:cursor-wait"
               >
-                {translating ? '...' : `Aus ${source.toUpperCase()}`}
+                {`Aus ${source.toUpperCase()}`}
               </button>
             ))}
           </div>
