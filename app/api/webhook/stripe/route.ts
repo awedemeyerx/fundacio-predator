@@ -9,7 +9,7 @@ let stripe: Stripe | null = null;
 
 function getStripe(): Stripe {
   if (!stripe) {
-    stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+    stripe = new Stripe(process.env.STRIPE_SECRET!);
   }
   return stripe;
 }
