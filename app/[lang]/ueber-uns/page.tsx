@@ -52,9 +52,9 @@ const content = {
     donateCta: 'Jetzt spenden',
     teamTitle: 'Direktorium',
     team: [
-      { name: 'Arnd von Wedemeyer', role: 'Presidente' },
-      { name: 'Xenia von Wedemeyer', role: 'Co-Presidente' },
-      { name: 'Gabriel Nadal Fortuny', role: 'Secretario' },
+      { name: 'Arnd von Wedemeyer', role: 'Presidente', image: 'https://adwrup9jyslnyjhd.public.blob.vercel-storage.com/fundacio-predator/portraits/arnd-1.jpg' },
+      { name: 'Xenia von Wedemeyer', role: 'Co-Presidente', image: 'https://adwrup9jyslnyjhd.public.blob.vercel-storage.com/fundacio-predator/portraits/xenia-1.jpg' },
+      { name: 'Gabriel Nadal Fortuny', role: 'Secretario', image: 'https://adwrup9jyslnyjhd.public.blob.vercel-storage.com/fundacio-predator/portraits/gabriel-1.jpg' },
     ],
   },
   en: {
@@ -101,9 +101,9 @@ const content = {
     donateCta: 'Donate now',
     teamTitle: 'Board of Directors',
     team: [
-      { name: 'Arnd von Wedemeyer', role: 'President' },
-      { name: 'Xenia von Wedemeyer', role: 'Co-President' },
-      { name: 'Gabriel Nadal Fortuny', role: 'Secretary' },
+      { name: 'Arnd von Wedemeyer', role: 'President', image: 'https://adwrup9jyslnyjhd.public.blob.vercel-storage.com/fundacio-predator/portraits/arnd-1.jpg' },
+      { name: 'Xenia von Wedemeyer', role: 'Co-President', image: 'https://adwrup9jyslnyjhd.public.blob.vercel-storage.com/fundacio-predator/portraits/xenia-1.jpg' },
+      { name: 'Gabriel Nadal Fortuny', role: 'Secretary', image: 'https://adwrup9jyslnyjhd.public.blob.vercel-storage.com/fundacio-predator/portraits/gabriel-1.jpg' },
     ],
   },
   es: {
@@ -150,9 +150,9 @@ const content = {
     donateCta: 'Donar ahora',
     teamTitle: 'Patronato',
     team: [
-      { name: 'Arnd von Wedemeyer', role: 'Presidente' },
-      { name: 'Xenia von Wedemeyer', role: 'Co-Presidente' },
-      { name: 'Gabriel Nadal Fortuny', role: 'Secretario' },
+      { name: 'Arnd von Wedemeyer', role: 'Presidente', image: 'https://adwrup9jyslnyjhd.public.blob.vercel-storage.com/fundacio-predator/portraits/arnd-1.jpg' },
+      { name: 'Xenia von Wedemeyer', role: 'Co-Presidente', image: 'https://adwrup9jyslnyjhd.public.blob.vercel-storage.com/fundacio-predator/portraits/xenia-1.jpg' },
+      { name: 'Gabriel Nadal Fortuny', role: 'Secretario', image: 'https://adwrup9jyslnyjhd.public.blob.vercel-storage.com/fundacio-predator/portraits/gabriel-1.jpg' },
     ],
   },
 };
@@ -217,7 +217,15 @@ export default function UeberUnsPage({ params }: { params: { lang: string } }) {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 mb-16">
               {c.team.map((member) => (
                 <div key={member.name} className="text-center">
-                  <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-warm-sand" />
+                  <div className="w-28 h-28 mx-auto mb-4 rounded-full overflow-hidden bg-warm-sand relative">
+                    <Image
+                      src={member.image}
+                      alt={member.name}
+                      fill
+                      className="object-cover"
+                      sizes="112px"
+                    />
+                  </div>
                   <h3 className="font-serif text-lg font-bold text-charcoal">
                     {member.name}
                   </h3>
