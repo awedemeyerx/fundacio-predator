@@ -8,9 +8,9 @@ import { siteConfig } from '@/lib/site.config';
 import { langUrl } from '@/lib/hreflang';
 
 const heroImages = [
-  { src: '/images/projects/educaclowns/educaclowns-2.jpg', alt: 'EducaClowns', rotate: '-3deg', top: '8%', right: '2%', width: 340, height: 227 },
-  { src: '/images/projects/sos-mamas/sos-mamas-1.webp', alt: 'SOS Mamás', rotate: '2.5deg', top: '38%', right: '12%', width: 300, height: 200 },
-  { src: '/images/about/girl-with-heart.webp', alt: 'Fundació Predator', rotate: '-1.5deg', top: '62%', right: '0%', width: 280, height: 187 },
+  { src: '/images/projects/educaclowns/educaclowns-2.jpg', alt: 'EducaClowns', rotate: '-3deg', top: '8%', right: '2%', w: 340, h: 227, objectPosition: '50% 25%' },
+  { src: '/images/projects/sos-mamas/sos-mamas-1.webp', alt: 'SOS Mamás', rotate: '2.5deg', top: '38%', right: '12%', w: 300, h: 200, objectPosition: '50% 50%' },
+  { src: '/images/about/girl-with-heart.webp', alt: 'Fundació Predator', rotate: '-1.5deg', top: '62%', right: '0%', w: 280, h: 187, objectPosition: '50% 50%' },
 ];
 
 export default function HeroSection({ lang }: { lang: Lang }) {
@@ -46,13 +46,17 @@ export default function HeroSection({ lang }: { lang: Lang }) {
             className="absolute"
             style={{ top: img.top, right: img.right, rotate: img.rotate }}
           >
-            <div className="rounded-xl overflow-hidden shadow-lg shadow-charcoal/5 opacity-[0.18] hover:opacity-[0.35] transition-opacity duration-700">
+            <div
+              className="rounded-xl overflow-hidden shadow-lg shadow-charcoal/5 opacity-[0.18] hover:opacity-[0.35] transition-opacity duration-700 relative"
+              style={{ width: img.w, height: img.h }}
+            >
               <Image
                 src={img.src}
                 alt={img.alt}
-                width={img.width}
-                height={img.height}
+                fill
                 className="object-cover"
+                style={{ objectPosition: img.objectPosition }}
+                sizes="340px"
               />
             </div>
           </motion.div>

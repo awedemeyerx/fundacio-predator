@@ -4,7 +4,14 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import FadeIn from '@/components/ui/FadeIn';
 import Link from 'next/link';
+import Image from 'next/image';
 import { langUrl } from '@/lib/hreflang';
+
+const projectCovers: Record<string, { src: string; objectPosition: string }> = {
+  educaclowns: { src: '/images/projects/educaclowns/educaclowns-1.jpg', objectPosition: '50% 25%' },
+  pollenca: { src: '/images/projects/pollenca/pollenca-1.webp', objectPosition: '50% 50%' },
+  'sos-mamas': { src: '/images/projects/sos-mamas/sos-mamas-1.webp', objectPosition: '50% 50%' },
+};
 
 export default function ProjektePage({ params }: { params: { lang: string } }) {
   const lang = (params.lang as Lang) || 'de';
@@ -42,8 +49,17 @@ export default function ProjektePage({ params }: { params: { lang: string } }) {
                   href={langUrl(lang, `/projekte/${project.slug}`)}
                   className="group grid grid-cols-1 md:grid-cols-2 gap-8 items-center"
                 >
-                  <div className="aspect-[16/10] bg-gradient-to-br from-warm-sand to-charcoal/5 rounded-2xl overflow-hidden">
-                    <div className="w-full h-full bg-amber/5 group-hover:bg-amber/10 transition-colors" />
+                  <div className="aspect-[16/10] rounded-2xl overflow-hidden relative bg-charcoal/[0.03]">
+                    {projectCovers[project.slug] && (
+                      <Image
+                        src={projectCovers[project.slug].src}
+                        alt={project.title[lang]}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        style={{ objectPosition: projectCovers[project.slug].objectPosition }}
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                      />
+                    )}
                   </div>
                   <div>
                     <span className="inline-block bg-forest/10 text-forest text-xs uppercase tracking-wider px-3 py-1.5 rounded-full font-medium mb-4">

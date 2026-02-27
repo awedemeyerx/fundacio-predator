@@ -7,10 +7,10 @@ import { siteConfig } from '@/lib/site.config';
 import { langUrl } from '@/lib/hreflang';
 import FadeIn from '@/components/ui/FadeIn';
 
-const projectCovers: Record<string, string> = {
-  educaclowns: '/images/projects/educaclowns/educaclowns-1.jpg',
-  pollenca: '/images/projects/pollenca/pollenca-1.webp',
-  'sos-mamas': '/images/projects/sos-mamas/sos-mamas-1.webp',
+const projectCovers: Record<string, { src: string; objectPosition: string }> = {
+  educaclowns: { src: '/images/projects/educaclowns/educaclowns-1.jpg', objectPosition: '50% 25%' },
+  pollenca: { src: '/images/projects/pollenca/pollenca-1.webp', objectPosition: '50% 50%' },
+  'sos-mamas': { src: '/images/projects/sos-mamas/sos-mamas-1.webp', objectPosition: '50% 50%' },
 };
 
 export default function ProjectsPreview({ lang }: { lang: Lang }) {
@@ -49,10 +49,11 @@ export default function ProjectsPreview({ lang }: { lang: Lang }) {
                 <div className="aspect-[4/3] relative overflow-hidden bg-charcoal/[0.03]">
                   {projectCovers[project.slug] && (
                     <Image
-                      src={projectCovers[project.slug]}
+                      src={projectCovers[project.slug].src}
                       alt={project.title[lang]}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      style={{ objectPosition: projectCovers[project.slug].objectPosition }}
                       sizes="(max-width: 768px) 100vw, 33vw"
                     />
                   )}
