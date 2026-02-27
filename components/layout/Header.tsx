@@ -9,10 +9,8 @@ import { Lang, DEFAULT_LANG } from '@/lib/types';
 import { siteConfig } from '@/lib/site.config';
 import { langUrl } from '@/lib/hreflang';
 
-function LangSwitcher({ lang }: { lang: Lang }) {
+function useRawPath(lang: Lang) {
   const pathname = usePathname();
-
-  // Strip current language prefix to get the raw path
   let rawPath = pathname;
   if (rawPath.startsWith(`/${lang}/`)) {
     rawPath = rawPath.slice(lang.length + 1);
@@ -21,12 +19,17 @@ function LangSwitcher({ lang }: { lang: Lang }) {
   } else if (lang === DEFAULT_LANG && !rawPath.startsWith('/en') && !rawPath.startsWith('/es')) {
     // Already a bare path for default language — keep as-is
   }
+  return rawPath;
+}
 
-  const langs: { code: Lang; label: string }[] = [
-    { code: 'de', label: 'DE' },
-    { code: 'en', label: 'EN' },
-    { code: 'es', label: 'ES' },
-  ];
+const langs: { code: Lang; label: string; flag: string }[] = [
+  { code: 'de', label: 'DE', flag: '🇩🇪' },
+  { code: 'en', label: 'EN', flag: '🇬🇧' },
+  { code: 'es', label: 'ES', flag: '🇪🇸' },
+];
+
+function LangSwitcher({ lang }: { lang: Lang }) {
+  const rawPath = useRawPath(lang);
 
   return (
     <div className="flex items-center gap-1 text-xs tracking-wide">
@@ -44,6 +47,26 @@ function LangSwitcher({ lang }: { lang: Lang }) {
             {label}
           </Link>
         </span>
+      ))}
+    </div>
+  );
+}
+
+function MobileLangSwitcher({ lang }: { lang: Lang }) {
+  const rawPath = useRawPath(lang);
+
+  return (
+    <div className="flex items-center gap-0.5">
+      {langs.map(({ code, flag }) => (
+        <Link
+          key={code}
+          href={langUrl(code, rawPath)}
+          className={`text-base leading-none p-1 transition-opacity ${
+            code === lang ? 'opacity-100' : 'opacity-40 hover:opacity-70'
+          }`}
+        >
+          {flag}
+        </Link>
       ))}
     </div>
   );
@@ -90,23 +113,26 @@ export default function Header({ lang }: { lang: Lang }) {
           </Link>
         </nav>
 
-        {/* Mobile Burger */}
-        <button
-          onClick={() => setMobileOpen(!mobileOpen)}
-          className="md:hidden relative w-10 h-10 flex flex-col justify-center items-center gap-[5px] -mr-2"
-          aria-label="Menu"
-        >
-          <span
-            className={`w-5 h-[1.5px] bg-charcoal transition-all duration-300 ${
-              mobileOpen ? 'rotate-45 translate-y-[3.25px]' : ''
-            }`}
-          />
-          <span
-            className={`w-5 h-[1.5px] bg-charcoal transition-all duration-300 ${
-              mobileOpen ? '-rotate-45 -translate-y-[3.25px]' : ''
-            }`}
-          />
-        </button>
+        {/* Mobile: Lang Flags + Burger */}
+        <div className="md:hidden flex items-center gap-1">
+          <MobileLangSwitcher lang={lang} />
+          <button
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className="relative w-10 h-10 flex flex-col justify-center items-center gap-[5px] -mr-2"
+            aria-label="Menu"
+          >
+            <span
+              className={`w-5 h-[1.5px] bg-charcoal transition-all duration-300 ${
+                mobileOpen ? 'rotate-45 translate-y-[3.25px]' : ''
+              }`}
+            />
+            <span
+              className={`w-5 h-[1.5px] bg-charcoal transition-all duration-300 ${
+                mobileOpen ? '-rotate-45 -translate-y-[3.25px]' : ''
+              }`}
+            />
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu */}
@@ -130,9 +156,6 @@ export default function Header({ lang }: { lang: Lang }) {
                   {item.label[lang]}
                 </Link>
               ))}
-              <div className="pt-3 border-t border-charcoal/5">
-                <LangSwitcher lang={lang} />
-              </div>
               <Link
                 href={langUrl(lang, '/spenden')}
                 onClick={() => setMobileOpen(false)}
