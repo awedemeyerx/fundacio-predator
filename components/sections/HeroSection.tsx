@@ -1,5 +1,6 @@
 'use client';
 
+import { useRef, useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
@@ -8,16 +9,32 @@ import { siteConfig } from '@/lib/site.config';
 import { langUrl } from '@/lib/hreflang';
 
 const heroImages = [
-  { src: '/images/projects/educaclowns/educaclowns-2.jpg', alt: 'EducaClowns', rotate: '-3deg', top: '8%', right: '2%', w: 340, h: 227, objectPosition: '50% 25%' },
-  { src: '/images/projects/sos-mamas/sos-mamas-1.webp', alt: 'SOS Mamás', rotate: '2.5deg', top: '38%', right: '12%', w: 300, h: 200, objectPosition: '50% 50%' },
-  { src: '/images/about/girl-with-heart.webp', alt: 'Fundació Predator', rotate: '-1.5deg', top: '62%', right: '0%', w: 280, h: 187, objectPosition: '50% 50%' },
+  { src: '/images/projects/educaclowns/educaclowns-2.jpg', alt: 'EducaClowns', objectPosition: '50% 25%' },
+  { src: '/images/projects/sos-mamas/sos-mamas-1.webp', alt: 'SOS Mamás', objectPosition: '50% 50%' },
+  { src: '/images/about/girl-with-heart.webp', alt: 'Fundació Predator', objectPosition: '50% 50%' },
+  { src: '/images/projects/pollenca/pollenca-1.webp', alt: 'Pollença', objectPosition: '50% 50%' },
 ];
+
+function useScrollX() {
+  const [scrollY, setScrollY] = useState(0);
+
+  useEffect(() => {
+    function handleScroll() {
+      setScrollY(window.scrollY);
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  return scrollY;
+}
 
 export default function HeroSection({ lang }: { lang: Lang }) {
   const { hero } = siteConfig.content;
+  const scrollY = useScrollX();
 
   return (
-    <section className="relative min-h-[92vh] flex items-center overflow-hidden bg-white">
+    <section className="relative min-h-[92vh] flex flex-col justify-center overflow-hidden bg-white">
       {/* Subtle oval gradient — warm glow, not beige */}
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[140%] h-[120%] pointer-events-none"
@@ -35,38 +52,10 @@ export default function HeroSection({ lang }: { lang: Lang }) {
         }}
       />
 
-      {/* Photo collage — desktop only */}
-      <div className="hidden lg:block absolute inset-0 pointer-events-none">
-        {heroImages.map((img, i) => (
-          <motion.div
-            key={img.src}
-            initial={{ opacity: 0, scale: 0.92 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1, delay: 0.6 + i * 0.2 }}
-            className="absolute"
-            style={{ top: img.top, right: img.right, rotate: img.rotate }}
-          >
-            <div
-              className="rounded-xl overflow-hidden shadow-lg shadow-charcoal/5 opacity-[0.18] hover:opacity-[0.35] transition-opacity duration-700 relative"
-              style={{ width: img.w, height: img.h }}
-            >
-              <Image
-                src={img.src}
-                alt={img.alt}
-                fill
-                className="object-cover"
-                style={{ objectPosition: img.objectPosition }}
-                sizes="340px"
-              />
-            </div>
-          </motion.div>
-        ))}
-      </div>
-
       {/* Top accent line */}
       <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-amber to-transparent opacity-40" />
 
-      <div className="relative max-w-6xl mx-auto px-6 pt-28 pb-20">
+      <div className="relative max-w-6xl mx-auto px-6 pt-28 pb-8 sm:pb-12">
         <div className="max-w-3xl">
           {/* Overline */}
           <motion.p
@@ -123,6 +112,36 @@ export default function HeroSection({ lang }: { lang: Lang }) {
           </motion.div>
         </div>
       </div>
+
+      {/* Photo strip — scrolls left on scroll */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.8 }}
+        className="relative mt-auto pb-10 sm:pb-16"
+      >
+        <div
+          className="flex gap-4 sm:gap-6 px-6 will-change-transform"
+          style={{ transform: `translateX(-${scrollY * 0.4}px)` }}
+        >
+          {heroImages.map((img) => (
+            <div
+              key={img.src}
+              className="relative flex-shrink-0 w-[260px] sm:w-[320px] lg:w-[380px] aspect-[3/2] rounded-xl overflow-hidden shadow-md shadow-charcoal/5"
+            >
+              <Image
+                src={img.src}
+                alt={img.alt}
+                fill
+                className="object-cover"
+                style={{ objectPosition: img.objectPosition }}
+                sizes="(max-width: 640px) 260px, (max-width: 1024px) 320px, 380px"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+            </div>
+          ))}
+        </div>
+      </motion.div>
     </section>
   );
 }
