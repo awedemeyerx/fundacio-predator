@@ -314,7 +314,7 @@ export default function BlogPostForm({ post }: BlogPostFormProps) {
 
       {/* Language tabs + Translation + Editor */}
       <div className="max-w-3xl mx-auto">
-        <div className="flex items-center justify-between border-b border-charcoal/10 mb-4">
+        <div className="flex flex-wrap items-center gap-y-2 justify-between border-b border-charcoal/10 mb-4">
           <div className="flex">
             {LANGS.map((lang) => (
               <button
@@ -331,12 +331,12 @@ export default function BlogPostForm({ post }: BlogPostFormProps) {
             ))}
           </div>
           {/* SEO Autopilot + Translation buttons */}
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
               onClick={() => setSeoModalOpen(true)}
               disabled={!form.content_de && !form.title_de}
-              className="px-3 py-1.5 bg-charcoal text-white text-xs font-medium rounded-md hover:bg-charcoal/80 transition-colors disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1.5"
+              className="px-3 py-1.5 bg-amber text-white text-xs font-medium rounded-md hover:bg-amber-600 transition-colors disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1.5"
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
