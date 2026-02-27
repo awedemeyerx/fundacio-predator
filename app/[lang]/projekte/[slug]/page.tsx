@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import Image from 'next/image';
 import { Lang } from '@/lib/types';
 import { siteConfig } from '@/lib/site.config';
 import Header from '@/components/layout/Header';
@@ -7,6 +8,34 @@ import FadeIn from '@/components/ui/FadeIn';
 import Link from 'next/link';
 import { langUrl } from '@/lib/hreflang';
 import DonationCTA from '@/components/sections/DonationCTA';
+
+const projectImages: Record<string, { hero: string; gallery: { src: string; alt: string }[] }> = {
+  educaclowns: {
+    hero: '/images/projects/educaclowns/educaclowns-2.jpg',
+    gallery: [
+      { src: '/images/projects/educaclowns/educaclowns-1.jpg', alt: 'Educaclowns 2025 in Port Adriano' },
+      { src: '/images/projects/educaclowns/educaclowns-2.jpg', alt: 'Educaclowns im Einsatz' },
+      { src: '/images/projects/educaclowns/educaclowns-3.jpg', alt: 'Vorbereitung auf den Einsatz' },
+    ],
+  },
+  pollenca: {
+    hero: '/images/projects/pollenca/pollenca-1.webp',
+    gallery: [
+      { src: '/images/projects/pollenca/pollenca-1.webp', alt: 'Nico und Helena bei der Essensausgabe im R3SPIRA' },
+      { src: '/images/projects/pollenca/pollenca-2.webp', alt: 'Besuch vom Bürgermeister und den Sozialarbeiterinnen' },
+      { src: '/images/projects/pollenca/pollenca-3.webp', alt: 'Mahlzeiten für Familien in Pollença' },
+    ],
+  },
+  'sos-mamas': {
+    hero: '/images/projects/sos-mamas/sos-mamas-1.webp',
+    gallery: [
+      { src: '/images/projects/sos-mamas/sos-mamas-1.webp', alt: 'Gebäude der Predator SL in Port d\'Andratx' },
+      { src: '/images/projects/sos-mamas/sos-mamas-2.webp', alt: 'Der Truck von S.O.S. Mamas vor Ort' },
+      { src: '/images/projects/sos-mamas/sos-mamas-3.webp', alt: 'Mit vereinten Kräften' },
+      { src: '/images/projects/sos-mamas/sos-mamas-4.webp', alt: 'Ascen Maestre von S.O.S. Mamas und Pilar' },
+    ],
+  },
+};
 
 const projectContent: Record<
   string,
@@ -207,6 +236,7 @@ export default function ProjectPage({
     (p) => p.slug === params.slug
   );
   const content = projectContent[params.slug]?.[lang];
+  const images = projectImages[params.slug];
 
   if (!project || !content) return notFound();
 
@@ -230,10 +260,19 @@ export default function ProjectPage({
             </div>
           </FadeIn>
 
-          {/* Hero Image placeholder */}
+          {/* Hero Image */}
           <FadeIn>
-            <div className="aspect-[21/9] bg-gradient-to-br from-warm-sand to-charcoal/5 rounded-2xl mb-10 overflow-hidden">
-              <div className="w-full h-full bg-amber/5" />
+            <div className="aspect-[21/9] rounded-2xl mb-10 overflow-hidden bg-charcoal/[0.03]">
+              {images && (
+                <Image
+                  src={images.hero}
+                  alt={project.title[lang]}
+                  width={1200}
+                  height={514}
+                  className="w-full h-full object-cover"
+                  priority
+                />
+              )}
             </div>
           </FadeIn>
 
@@ -272,6 +311,25 @@ export default function ProjectPage({
               </p>
             </div>
           </FadeIn>
+
+          {/* Photo Gallery */}
+          {images && images.gallery.length > 0 && (
+            <FadeIn delay={0.7}>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-10">
+                {images.gallery.map((img, i) => (
+                  <div key={i} className="aspect-[4/3] rounded-xl overflow-hidden bg-charcoal/[0.03]">
+                    <Image
+                      src={img.src}
+                      alt={img.alt}
+                      width={400}
+                      height={300}
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
+                ))}
+              </div>
+            </FadeIn>
+          )}
         </div>
 
         <DonationCTA lang={lang} />
