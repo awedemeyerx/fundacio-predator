@@ -38,6 +38,63 @@ p, li, span, a {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Blog article — heading spacing */
+.prose h2 {
+  margin-top: 2.5em;
+  margin-bottom: 1em;
+}
+.prose h3 {
+  margin-top: 1.75em;
+  margin-bottom: 0.75em;
+}
+
+/* Blog article — first letter drop cap */
+.blog-content > div > p:first-of-type::first-letter {
+  float: left;
+  font-family: var(--font-libre), Georgia, serif;
+  font-size: 3.5em;
+  line-height: 0.8;
+  padding-right: 0.08em;
+  margin-top: 0.05em;
+  color: #1a1a1a;
+  font-weight: 700;
+}
+
+/* Blog article — pull quote */
+.blog-content blockquote {
+  border-left: 3px solid #E8722A;
+  padding-left: 1.5em;
+  margin: 2em 0;
+  font-family: var(--font-libre), Georgia, serif;
+  font-style: italic;
+  font-size: 1.15em;
+  color: #1a1a1a;
+  line-height: 1.7;
+}
+
+/* Blog article — horizontal rule */
+.blog-content hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(to right, transparent, #E8722A40, transparent);
+  margin: 3em 0;
+}
+
+/* BlockNote WYSIWYG — match live blog typography */
+.bn-editor [data-content-type="heading"] {
+  font-family: var(--font-libre), Georgia, serif;
+  letter-spacing: -0.015em;
+  color: #1a1a1a;
+}
+.bn-editor [data-content-type="paragraph"] {
+  line-height: 1.8;
+  color: #4a4a4a;
+  font-size: 16px;
+}
+.bn-editor a {
+  color: #E8722A;
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;

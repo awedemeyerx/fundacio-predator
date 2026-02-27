@@ -116,70 +116,35 @@ export default function BlogPostForm({ post }: BlogPostFormProps) {
     }
   }
 
+  const isNew = !post?.id;
+
   return (
     <div className="space-y-6 max-w-4xl">
       {error && (
         <div className="bg-red-50 text-red-600 text-sm px-4 py-3 rounded-lg">{error}</div>
       )}
 
-      {/* Cover Image */}
-      <div className="bg-white rounded-xl border border-charcoal/5 p-6">
-        <label className="block text-sm font-medium text-charcoal mb-2">Cover Image</label>
-        {form.cover_image_url && (
-          <img src={form.cover_image_url} alt="Cover" className="w-full max-h-48 object-cover rounded-lg mb-3" />
-        )}
-        <input type="file" accept="image/*" onChange={handleCoverUpload} className="text-sm" />
-        {coverUploading && <span className="text-xs text-charcoal-muted ml-2">Uploading...</span>}
+      {/* Title — large, serif, like the live blog */}
+      <div className="max-w-3xl mx-auto">
         <input
           type="text"
-          value={form.cover_image_url}
-          onChange={(e) => updateField('cover_image_url', e.target.value)}
-          placeholder="Or paste image URL"
-          className="mt-2 w-full px-3 py-2 border border-charcoal/10 rounded-lg text-sm"
+          value={form[`title_${activeLang}`]}
+          onChange={(e) => updateField(`title_${activeLang}`, e.target.value)}
+          placeholder={`Title (${activeLang.toUpperCase()})`}
+          className="w-full text-2xl md:text-3xl font-serif text-charcoal placeholder:text-charcoal/30 bg-transparent border-none outline-none focus:ring-0 py-2"
         />
       </div>
 
-      {/* Meta */}
-      <div className="bg-white rounded-xl border border-charcoal/5 p-6 grid grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-charcoal mb-1">Author</label>
-          <input
-            type="text"
-            value={form.author}
-            onChange={(e) => updateField('author', e.target.value)}
-            className="w-full px-3 py-2 border border-charcoal/10 rounded-lg text-sm"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-charcoal mb-1">Published</label>
-          <input
-            type="datetime-local"
-            value={form.published_at}
-            onChange={(e) => updateField('published_at', e.target.value)}
-            className="w-full px-3 py-2 border border-charcoal/10 rounded-lg text-sm"
-          />
-        </div>
-        <div className="col-span-2 flex items-center gap-2">
-          <input
-            type="checkbox"
-            checked={form.active}
-            onChange={(e) => updateField('active', e.target.checked)}
-            className="rounded"
-          />
-          <label className="text-sm text-charcoal">Active (visible on website)</label>
-        </div>
-      </div>
-
-      {/* Language tabs */}
-      <div className="bg-white rounded-xl border border-charcoal/5 overflow-hidden">
-        <div className="flex border-b border-charcoal/5">
+      {/* Language tabs + Editor */}
+      <div className="max-w-3xl mx-auto">
+        <div className="flex border-b border-charcoal/10 mb-4">
           {LANGS.map((lang) => (
             <button
               key={lang}
               onClick={() => setActiveLang(lang)}
-              className={`px-6 py-3 text-sm font-medium transition-colors ${
+              className={`px-5 py-2.5 text-sm font-medium transition-colors ${
                 activeLang === lang
-                  ? 'text-amber border-b-2 border-amber bg-amber/5'
+                  ? 'text-amber border-b-2 border-amber'
                   : 'text-charcoal-muted hover:text-charcoal'
               }`}
             >
@@ -188,7 +153,37 @@ export default function BlogPostForm({ post }: BlogPostFormProps) {
           ))}
         </div>
 
-        <div className="p-6 space-y-4">
+        <BlockNoteEditor
+          key={activeLang}
+          initialHTML={form[`content_${activeLang}`]}
+          onChange={handleContentChange(activeLang)}
+        />
+      </div>
+
+      {/* Details — collapsible metadata */}
+      <details open={isNew} className="max-w-3xl mx-auto bg-white rounded-xl border border-charcoal/5">
+        <summary className="px-6 py-4 cursor-pointer text-sm font-medium text-charcoal select-none hover:bg-charcoal/[0.02] rounded-xl">
+          Details
+        </summary>
+        <div className="px-6 pb-6 pt-2 space-y-5">
+          {/* Cover Image */}
+          <div>
+            <label className="block text-sm font-medium text-charcoal mb-2">Cover Image</label>
+            {form.cover_image_url && (
+              <img src={form.cover_image_url} alt="Cover" className="w-full max-h-48 object-cover rounded-lg mb-3" />
+            )}
+            <input type="file" accept="image/*" onChange={handleCoverUpload} className="text-sm" />
+            {coverUploading && <span className="text-xs text-charcoal-muted ml-2">Uploading...</span>}
+            <input
+              type="text"
+              value={form.cover_image_url}
+              onChange={(e) => updateField('cover_image_url', e.target.value)}
+              placeholder="Or paste image URL"
+              className="mt-2 w-full px-3 py-2 border border-charcoal/10 rounded-lg text-sm"
+            />
+          </div>
+
+          {/* Slug + Excerpt */}
           <div>
             <label className="block text-sm font-medium text-charcoal mb-1">Slug ({activeLang.toUpperCase()})</label>
             <input
@@ -200,15 +195,6 @@ export default function BlogPostForm({ post }: BlogPostFormProps) {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-charcoal mb-1">Title ({activeLang.toUpperCase()})</label>
-            <input
-              type="text"
-              value={form[`title_${activeLang}`]}
-              onChange={(e) => updateField(`title_${activeLang}`, e.target.value)}
-              className="w-full px-3 py-2 border border-charcoal/10 rounded-lg text-sm"
-            />
-          </div>
-          <div>
             <label className="block text-sm font-medium text-charcoal mb-1">Excerpt ({activeLang.toUpperCase()})</label>
             <textarea
               value={form[`excerpt_${activeLang}`]}
@@ -217,19 +203,44 @@ export default function BlogPostForm({ post }: BlogPostFormProps) {
               className="w-full px-3 py-2 border border-charcoal/10 rounded-lg text-sm"
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-charcoal mb-2">Content ({activeLang.toUpperCase()})</label>
-            <BlockNoteEditor
-              key={activeLang}
-              initialHTML={form[`content_${activeLang}`]}
-              onChange={handleContentChange(activeLang)}
+
+          {/* Author + Published */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-charcoal mb-1">Author</label>
+              <input
+                type="text"
+                value={form.author}
+                onChange={(e) => updateField('author', e.target.value)}
+                className="w-full px-3 py-2 border border-charcoal/10 rounded-lg text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-charcoal mb-1">Published</label>
+              <input
+                type="datetime-local"
+                value={form.published_at}
+                onChange={(e) => updateField('published_at', e.target.value)}
+                className="w-full px-3 py-2 border border-charcoal/10 rounded-lg text-sm"
+              />
+            </div>
+          </div>
+
+          {/* Active */}
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={form.active}
+              onChange={(e) => updateField('active', e.target.checked)}
+              className="rounded"
             />
+            <label className="text-sm text-charcoal">Active (visible on website)</label>
           </div>
         </div>
-      </div>
+      </details>
 
       {/* Actions */}
-      <div className="flex gap-3">
+      <div className="flex gap-3 max-w-3xl mx-auto">
         <button
           onClick={handleSave}
           disabled={saving}

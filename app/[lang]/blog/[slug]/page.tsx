@@ -123,35 +123,38 @@ export default async function BlogPostPage({
             </FadeIn>
           )}
 
-          {/* Meta */}
+          {/* Title */}
           <FadeIn delay={0.1}>
-            <div className="flex items-center gap-4 mb-6">
-              <time className="text-sm text-charcoal-muted">
+            <h1 className="font-serif text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-charcoal leading-tight mb-6">
+              {post.title}
+            </h1>
+          </FadeIn>
+
+          {/* Meta + divider */}
+          <FadeIn delay={0.15}>
+            <div className="flex items-center gap-4 mb-10 pb-8 border-b border-charcoal/8">
+              <time className="text-sm tracking-wide uppercase text-charcoal-muted">
                 {new Date(rawPost.published_at).toLocaleDateString(
                   lang === 'de' ? 'de-DE' : lang === 'es' ? 'es-ES' : 'en-US',
                   { year: 'numeric', month: 'long', day: 'numeric' }
                 )}
               </time>
               <span className="text-charcoal/15">·</span>
-              <span className="text-sm text-charcoal-muted">{rawPost.author}</span>
+              <span className="text-sm tracking-wide uppercase text-charcoal-muted">{rawPost.author}</span>
             </div>
-          </FadeIn>
-
-          {/* Title */}
-          <FadeIn delay={0.15}>
-            <h1 className="font-serif text-3xl sm:text-4xl lg:text-[2.75rem] font-bold text-charcoal leading-tight mb-8">
-              {post.title}
-            </h1>
           </FadeIn>
 
           {/* Content */}
           <FadeIn delay={0.2}>
-            <div className="prose prose-lg prose-charcoal max-w-none
+            <div className="blog-content prose prose-lg prose-charcoal max-w-none
               prose-headings:font-serif prose-headings:text-charcoal
+              prose-h2:text-2xl prose-h2:font-bold
+              prose-h3:text-xl prose-h3:font-semibold prose-h3:text-charcoal/90
               prose-p:text-charcoal-body/80 prose-p:leading-[1.8] prose-p:text-[16px]
               prose-a:text-amber prose-a:no-underline hover:prose-a:underline
               prose-strong:text-charcoal prose-strong:font-semibold
-              prose-li:text-charcoal-body/80
+              prose-li:text-charcoal-body/80 prose-li:leading-[1.8]
+              prose-img:rounded-xl prose-img:shadow-sm
             ">
               {post.content && post.content.includes('<') ? (
                 <BlogContent html={post.content} />

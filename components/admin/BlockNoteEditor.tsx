@@ -1,5 +1,6 @@
 'use client';
 
+import { useRef, useEffect } from 'react';
 import { useCreateBlockNote } from '@blocknote/react';
 import { BlockNoteView } from '@blocknote/mantine';
 import '@blocknote/mantine/style.css';
@@ -8,6 +9,53 @@ interface BlockNoteEditorProps {
   initialHTML?: string;
   onChange: (html: string) => void;
 }
+
+const fundacioTheme = {
+  light: {
+    colors: {
+      editor: {
+        text: '#4a4a4a',
+        background: '#FFFFFF',
+      },
+      menu: {
+        text: '#1a1a1a',
+        background: '#FFFFFF',
+      },
+      tooltip: {
+        text: '#FFFFFF',
+        background: '#1a1a1a',
+      },
+      hovered: {
+        text: '#1a1a1a',
+        background: '#F5EDE3',
+      },
+      selected: {
+        text: '#FFFFFF',
+        background: '#E8722A',
+      },
+      disabled: {
+        text: '#8a8a8a',
+        background: '#F5EDE3',
+      },
+      shadow: 'rgba(0,0,0,0.08)',
+      border: 'rgba(26,26,26,0.1)',
+      sideMenu: '#8a8a8a',
+      highlights: {
+        gray: { text: '#1a1a1a', background: '#F5EDE3' },
+        brown: { text: '#1a1a1a', background: '#F5EDE3' },
+        red: { text: '#1a1a1a', background: '#fde8e8' },
+        orange: { text: '#1a1a1a', background: '#FFF3E8' },
+        yellow: { text: '#1a1a1a', background: '#FFF8E1' },
+        green: { text: '#1a1a1a', background: '#E8F5E9' },
+        blue: { text: '#1a1a1a', background: '#E3F2FD' },
+        purple: { text: '#1a1a1a', background: '#F3E5F5' },
+        pink: { text: '#1a1a1a', background: '#FCE4EC' },
+      },
+    },
+    borderRadius: 8,
+    fontFamily: 'var(--font-inter), system-ui, sans-serif',
+  },
+} as const;
 
 export default function BlockNoteEditor({ initialHTML, onChange }: BlockNoteEditorProps) {
   const editor = useCreateBlockNote({
@@ -21,8 +69,11 @@ export default function BlockNoteEditor({ initialHTML, onChange }: BlockNoteEdit
     },
   });
 
-  // Load initial HTML content
-  if (initialHTML && editor) {
+  // Load initial HTML only once on mount
+  const loaded = useRef(false);
+  useEffect(() => {
+    if (loaded.current || !initialHTML || !editor) return;
+    loaded.current = true;
     (async () => {
       try {
         const blocks = await editor.tryParseHTMLToBlocks(initialHTML);
@@ -31,17 +82,17 @@ export default function BlockNoteEditor({ initialHTML, onChange }: BlockNoteEdit
         // ignore parse errors on initial load
       }
     })();
-  }
+  }, [initialHTML, editor]);
 
   return (
-    <div className="border border-charcoal/10 rounded-xl overflow-hidden bg-white min-h-[400px]">
+    <div className="border border-charcoal/10 rounded-xl overflow-hidden bg-white min-h-[500px]">
       <BlockNoteView
         editor={editor}
         onChange={async () => {
           const html = await editor.blocksToHTMLLossy(editor.document);
           onChange(html);
         }}
-        theme="light"
+        theme={fundacioTheme as any}
       />
     </div>
   );
