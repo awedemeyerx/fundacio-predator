@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 
 const BlockNoteEditor = dynamic(() => import('./BlockNoteEditor'), { ssr: false });
+const SeoAutopilotModal = dynamic(() => import('./SeoAutopilotModal'), { ssr: false });
 
 interface BlogPostData {
   id?: number;
@@ -44,6 +45,7 @@ export default function BlogPostForm({ post }: BlogPostFormProps) {
   const [coverUploading, setCoverUploading] = useState(false);
   const [tagInput, setTagInput] = useState('');
   const [translating, setTranslating] = useState(false);
+  const [seoModalOpen, setSeoModalOpen] = useState(false);
   const [postId, setPostId] = useState(post?.id);
   const coverFileRef = useRef<HTMLInputElement>(null);
   const coverDropRef = useRef<HTMLDivElement>(null);
@@ -270,6 +272,26 @@ export default function BlogPostForm({ post }: BlogPostFormProps) {
     }
   }
 
+  function handleSeoApply(data: Record<string, any>) {
+    const updates: Record<string, any> = {};
+    const formFields = [
+      'slug_de', 'slug_en', 'slug_es',
+      'title_de', 'title_en', 'title_es',
+      'content_en', 'content_es',
+      'excerpt_de', 'excerpt_en', 'excerpt_es',
+    ];
+    for (const f of formFields) {
+      if (data[f]) updates[f] = data[f];
+    }
+    // Optimized DE title — only apply if it changed
+    if (data.title_de && data.title_de !== form.title_de) {
+      updates.title_de = data.title_de;
+    }
+    if (data.tags?.length) updates.tags = data.tags;
+    setForm(prev => ({ ...prev, ...updates }));
+    scheduleSave();
+  }
+
   const isNew = !postId;
 
   return (
@@ -307,8 +329,20 @@ export default function BlogPostForm({ post }: BlogPostFormProps) {
               </button>
             ))}
           </div>
-          {/* Translation buttons */}
+          {/* SEO Autopilot + Translation buttons */}
           <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setSeoModalOpen(true)}
+              disabled={!form.content_de && !form.title_de}
+              className="px-3 py-1.5 bg-charcoal text-white text-xs font-medium rounded-md hover:bg-charcoal/80 transition-colors disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1.5"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              SEO Autopilot
+            </button>
+            <div className="w-px h-5 bg-charcoal/10" />
             {translating && (
               <div className="flex items-center gap-2 text-amber text-xs font-medium">
                 <svg className="animate-spin h-3.5 w-3.5" viewBox="0 0 24 24" fill="none">
@@ -542,6 +576,17 @@ export default function BlogPostForm({ post }: BlogPostFormProps) {
           <span className="text-red-500 text-sm ml-2">Fehler beim Speichern</span>
         )}
       </div>
+
+      {/* SEO Autopilot Modal */}
+      {seoModalOpen && (
+        <SeoAutopilotModal
+          title_de={form.title_de}
+          content_de={form.content_de}
+          excerpt_de={form.excerpt_de}
+          onApply={handleSeoApply}
+          onClose={() => setSeoModalOpen(false)}
+        />
+      )}
     </div>
   );
 }
