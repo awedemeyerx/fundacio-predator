@@ -93,8 +93,9 @@ export default function BlogPostForm({ post }: BlogPostFormProps) {
     };
   }, []);
 
-  // Auto-save: debounce 3s after last change
+  // Auto-save: debounce 3s after last change (paused while SEO modal is open)
   function scheduleSave() {
+    if (seoModalOpen) return;
     if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current);
     autoSaveTimer.current = setTimeout(() => {
       doSave(true);
