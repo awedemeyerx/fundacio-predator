@@ -13,8 +13,22 @@ export default function ResetPasswordPage() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    // Supabase automatically picks up the recovery token from the URL hash
     const supabase = createSupabaseBrowser();
+
+    // Handle PKCE flow: exchange ?code= parameter for session
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');
+    if (code) {
+      supabase.auth.exchangeCodeForSession(code).then(({ error: exchError }) => {
+        if (exchError) {
+          setError('Link ungültig oder abgelaufen. Bitte fordere einen neuen an.');
+        } else {
+          setReady(true);
+        }
+      });
+    }
+
+    // Also handle implicit flow (hash-based tokens)
     supabase.auth.onAuthStateChange((event) => {
       if (event === 'PASSWORD_RECOVERY') {
         setReady(true);
