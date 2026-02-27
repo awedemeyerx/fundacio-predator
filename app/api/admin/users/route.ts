@@ -82,12 +82,21 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'User exists in auth but could not be found' }, { status: 500 });
       }
       authUid = existingAuthUser.id;
+
+      // Generate a magic link for the existing auth user so we can still send an invite email
+      const { data: magicData } = await supabaseAdmin.auth.admin.generateLink({
+        type: 'magiclink',
+        email: email.toLowerCase(),
+        options: { redirectTo },
+      });
+      if (magicData?.properties?.action_link) {
+        inviteLink = magicData.properties.action_link;
+      }
     } else {
       return NextResponse.json({ error: linkError.message }, { status: 500 });
     }
   } else {
     authUid = linkData.user.id;
-    // Build the full invite link from the returned action_link
     inviteLink = linkData.properties.action_link;
   }
 
