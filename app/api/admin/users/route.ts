@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { getAdminUser } from '@/lib/admin-auth';
+import { sendAdminInvite } from '@/lib/email';
 
 export async function GET() {
   const user = await getAdminUser();
@@ -56,18 +57,20 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'User with this email already exists' }, { status: 409 });
   }
 
-  // Invite user via Supabase Auth — creates auth user + sends magic link
+  // Generate invite link via Supabase Auth (without sending email)
   const redirectTo = 'https://fundaciopredator.org/admin/auth/reset-callback';
   let authUid: string;
+  let inviteLink: string | null = null;
 
-  const { data: inviteData, error: inviteError } = await supabaseAdmin.auth.admin.inviteUserByEmail(
-    email.toLowerCase(),
-    { redirectTo }
-  );
+  const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
+    type: 'invite',
+    email: email.toLowerCase(),
+    options: { redirectTo },
+  });
 
-  if (inviteError) {
-    // If user already exists in Auth (409), look up their existing uid
-    if (inviteError.status === 422 || inviteError.message?.includes('already been registered')) {
+  if (linkError) {
+    // If user already exists in Auth, look up their existing uid
+    if (linkError.message?.includes('already been registered') || linkError.status === 422) {
       const { data: listData, error: listError } = await supabaseAdmin.auth.admin.listUsers();
       if (listError) {
         return NextResponse.json({ error: listError.message }, { status: 500 });
@@ -80,10 +83,22 @@ export async function POST(request: NextRequest) {
       }
       authUid = existingAuthUser.id;
     } else {
-      return NextResponse.json({ error: inviteError.message }, { status: 500 });
+      return NextResponse.json({ error: linkError.message }, { status: 500 });
     }
   } else {
-    authUid = inviteData.user.id;
+    authUid = linkData.user.id;
+    // Build the full invite link from the returned action_link
+    inviteLink = linkData.properties.action_link;
+  }
+
+  // Send invite email via Brevo
+  if (inviteLink) {
+    try {
+      await sendAdminInvite({ email: email.toLowerCase(), name: name || null, inviteLink });
+    } catch (emailErr) {
+      console.error('Failed to send invite email:', emailErr);
+      // Continue — user was created, email can be resent later
+    }
   }
 
   // Create the admin user entry with the real auth uid

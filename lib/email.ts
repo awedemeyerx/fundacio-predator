@@ -153,6 +153,57 @@ async function sendBrevoEmail(to: string, subject: string, html: string) {
   }
 }
 
+interface AdminInviteParams {
+  email: string;
+  name: string | null;
+  inviteLink: string;
+}
+
+export async function sendAdminInvite(params: AdminInviteParams) {
+  const { name, inviteLink } = params;
+  const greeting = name ? `Hallo ${name}` : 'Hallo';
+
+  const html = `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+<body style="margin:0;padding:0;background:#FAFAF7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#FAFAF7;padding:40px 20px;">
+    <tr><td align="center">
+      <table width="100%" style="max-width:520px;">
+        <tr><td style="text-align:center;padding:0 0 24px;">
+          <img src="https://fundaciopredator.org/images/logo.png" width="180" alt="Fundació Predator" style="display:block;margin:0 auto;" />
+        </td></tr>
+        <tr><td>
+          <table width="100%" style="background:#fff;border-radius:16px;border:1px solid #e5e5e5;">
+            <tr><td style="padding:32px 24px;">
+              <h2 style="margin:0 0 16px;color:#1a1a1a;font-size:20px;">Einladung zum Admin-Bereich</h2>
+              <p style="margin:0 0 16px;color:#4a4a4a;font-size:15px;">${greeting},</p>
+              <p style="margin:0 0 24px;color:#4a4a4a;font-size:15px;">du wurdest zum Admin-Bereich der Fundació Predator eingeladen. Klicke auf den Button, um deinen Zugang zu aktivieren und ein Passwort zu setzen.</p>
+              <div style="text-align:center;margin:0 0 24px;">
+                <a href="${inviteLink}" style="display:inline-block;background:#E8722A;color:#fff;font-size:15px;font-weight:600;text-decoration:none;padding:14px 28px;border-radius:99px;">Zugang aktivieren</a>
+              </div>
+              <p style="margin:0;color:#8a8a8a;font-size:13px;">Falls du diese Einladung nicht erwartet hast, kannst du diese E-Mail ignorieren.</p>
+            </td></tr>
+          </table>
+        </td></tr>
+        <tr><td style="padding:24px 0 0;text-align:center;">
+          <p style="margin:0 0 4px;color:#8a8a8a;font-size:11px;">Fundació Predator · CIF: G09676479</p>
+          <p style="margin:0;color:#8a8a8a;font-size:11px;">info@fundaciopredator.org</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+
+  await sendBrevoEmail(
+    params.email,
+    'Einladung zum Admin-Bereich — Fundació Predator',
+    html
+  );
+}
+
 export async function sendDonationConfirmation(params: DonationEmailParams) {
   await sendBrevoEmail(
     params.email,
