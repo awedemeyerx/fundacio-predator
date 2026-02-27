@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid role' }, { status: 400 });
   }
 
-  // Check if email already exists
+  // Check if email already exists in admin users table
   const { data: existing } = await supabaseAdmin
     .from('fundacio_admin_users')
     .select('id')
@@ -56,14 +56,41 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'User with this email already exists' }, { status: 409 });
   }
 
-  // Create the admin user entry (auth_uid will be linked on first login)
-  // Use a placeholder UUID that will be replaced when user logs in
-  const placeholderUid = crypto.randomUUID();
+  // Invite user via Supabase Auth — creates auth user + sends magic link
+  const redirectTo = 'https://fundaciopredator.org/admin/auth/callback';
+  let authUid: string;
 
+  const { data: inviteData, error: inviteError } = await supabaseAdmin.auth.admin.inviteUserByEmail(
+    email.toLowerCase(),
+    { redirectTo }
+  );
+
+  if (inviteError) {
+    // If user already exists in Auth (409), look up their existing uid
+    if (inviteError.status === 422 || inviteError.message?.includes('already been registered')) {
+      const { data: listData, error: listError } = await supabaseAdmin.auth.admin.listUsers();
+      if (listError) {
+        return NextResponse.json({ error: listError.message }, { status: 500 });
+      }
+      const existingAuthUser = listData.users.find(
+        (u) => u.email?.toLowerCase() === email.toLowerCase()
+      );
+      if (!existingAuthUser) {
+        return NextResponse.json({ error: 'User exists in auth but could not be found' }, { status: 500 });
+      }
+      authUid = existingAuthUser.id;
+    } else {
+      return NextResponse.json({ error: inviteError.message }, { status: 500 });
+    }
+  } else {
+    authUid = inviteData.user.id;
+  }
+
+  // Create the admin user entry with the real auth uid
   const { data, error } = await supabaseAdmin
     .from('fundacio_admin_users')
     .insert({
-      auth_uid: placeholderUid,
+      auth_uid: authUid,
       email: email.toLowerCase(),
       name: name || null,
       role: role || 'editor',
