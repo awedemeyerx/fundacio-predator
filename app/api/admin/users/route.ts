@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
   }
 
   // Invite user via Supabase Auth — creates auth user + sends magic link
-  const redirectTo = 'https://fundaciopredator.org/admin/auth/callback';
+  const redirectTo = 'https://fundaciopredator.org/admin/auth/reset-callback';
   let authUid: string;
 
   const { data: inviteData, error: inviteError } = await supabaseAdmin.auth.admin.inviteUserByEmail(
