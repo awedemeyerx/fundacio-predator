@@ -72,7 +72,16 @@ export default function ResetPasswordPage() {
         </div>
 
         <div className="bg-white rounded-2xl shadow-sm border border-charcoal/5 p-8">
-          {!ready ? (
+          {error && !ready ? (
+            <div className="space-y-4">
+              <div className="bg-red-50 text-red-600 text-sm px-4 py-3 rounded-lg">
+                {error}
+              </div>
+              <a href="/admin/login" className="block text-center text-sm text-amber hover:underline">
+                Zurück zum Login
+              </a>
+            </div>
+          ) : !ready ? (
             <p className="text-charcoal-muted text-sm text-center">Link wird überprüft...</p>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
