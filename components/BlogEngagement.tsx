@@ -45,6 +45,7 @@ interface BlogEngagementProps {
   prevPost: AdjacentPost | null;
   nextPost: AdjacentPost | null;
   relatedPosts: AdjacentPost[];
+  donationSlot?: React.ReactNode;
 }
 
 const i18n = {
@@ -101,6 +102,7 @@ export default function BlogEngagement({
   prevPost,
   nextPost,
   relatedPosts,
+  donationSlot,
 }: BlogEngagementProps) {
   const t = i18n[lang];
   const [likeCount, setLikeCount] = useState(0);
@@ -237,6 +239,13 @@ export default function BlogEngagement({
           {likeCount} {t.likes}
         </button>
       </div>
+
+      {/* Donation CTA — between likes and comments */}
+      {donationSlot && (
+        <div className="mt-10">
+          {donationSlot}
+        </div>
+      )}
 
       {/* Comments */}
       <div className="mt-12">

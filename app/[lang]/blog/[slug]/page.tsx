@@ -217,7 +217,7 @@ export default async function BlogPostPage({
             </div>
           </FadeIn>
 
-          {/* Engagement: Likes, Comments, Nav */}
+          {/* Engagement: Likes, Donation, Comments, Nav */}
           <FadeIn delay={0.3}>
             <BlogEngagement
               postId={rawPost.id}
@@ -225,14 +225,8 @@ export default async function BlogPostPage({
               prevPost={prevPost}
               nextPost={nextPost}
               relatedPosts={[]}
+              donationSlot={<BlogDonationForm lang={lang} />}
             />
-          </FadeIn>
-
-          {/* Inline Donation Form */}
-          <FadeIn delay={0.4}>
-            <div className="mt-12">
-              <BlogDonationForm lang={lang} />
-            </div>
           </FadeIn>
         </article>
 
