@@ -156,6 +156,11 @@ ALTER TABLE fundacio_blog_comments ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Anyone can read approved comments" ON fundacio_blog_comments FOR SELECT USING (approved = true);
 CREATE POLICY "Anyone can insert comments" ON fundacio_blog_comments FOR INSERT WITH CHECK (true);
 
+-- Blog post tags and cover focal point
+ALTER TABLE fundacio_blog_posts ADD COLUMN IF NOT EXISTS tags text[] DEFAULT '{}';
+ALTER TABLE fundacio_blog_posts ADD COLUMN IF NOT EXISTS cover_focal_x integer DEFAULT 50;
+ALTER TABLE fundacio_blog_posts ADD COLUMN IF NOT EXISTS cover_focal_y integer DEFAULT 50;
+
 -- Indexes
 CREATE INDEX IF NOT EXISTS idx_fundacio_blog_likes_post ON fundacio_blog_likes(post_id);
 CREATE INDEX IF NOT EXISTS idx_fundacio_blog_comments_post ON fundacio_blog_comments(post_id) WHERE approved = true;

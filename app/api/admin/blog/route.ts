@@ -2,6 +2,25 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { getAdminUser } from '@/lib/admin-auth';
 
+// Only allow known columns to be written
+const ALLOWED_FIELDS = new Set([
+  'slug_de', 'slug_en', 'slug_es',
+  'title_de', 'title_en', 'title_es',
+  'content_de', 'content_en', 'content_es',
+  'excerpt_de', 'excerpt_en', 'excerpt_es',
+  'cover_image_url', 'cover_focal_x', 'cover_focal_y',
+  'author', 'active', 'published_at',
+  'tags', 'created_by_email',
+]);
+
+function pickAllowed(body: Record<string, unknown>) {
+  const result: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(body)) {
+    if (ALLOWED_FIELDS.has(key)) result[key] = value;
+  }
+  return result;
+}
+
 export async function GET() {
   const user = await getAdminUser();
   if (!user) {
@@ -34,8 +53,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Supabase not configured' }, { status: 500 });
   }
 
-  const body = await request.json();
-  body.created_by_email = user.email;
+  const raw = await request.json();
+  raw.created_by_email = user.email;
+  const body = pickAllowed(raw);
 
   const { data, error } = await supabaseAdmin
     .from('fundacio_blog_posts')
