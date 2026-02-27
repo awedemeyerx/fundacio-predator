@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
@@ -22,52 +22,99 @@ function useRawPath(lang: Lang) {
   return rawPath;
 }
 
-const langs: { code: Lang; label: string; flag: string }[] = [
-  { code: 'de', label: 'DE', flag: '🇩🇪' },
-  { code: 'en', label: 'EN', flag: '🇬🇧' },
-  { code: 'es', label: 'ES', flag: '🇪🇸' },
+const langs: { code: Lang; label: string }[] = [
+  { code: 'de', label: 'DE' },
+  { code: 'en', label: 'EN' },
+  { code: 'es', label: 'ES' },
 ];
 
-function LangSwitcher({ lang }: { lang: Lang }) {
+function CompactLangSwitcher({ lang }: { lang: Lang }) {
   const rawPath = useRawPath(lang);
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const currentLang = langs.find((l) => l.code === lang)!;
+  const otherLangs = langs.filter((l) => l.code !== lang);
+
+  // Close on outside click (primarily for mobile tap-to-open)
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent | TouchEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    if (open) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, [open]);
+
+  // Clean up timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
+
+  const handleMouseEnter = useCallback(() => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    setOpen(true);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    timeoutRef.current = setTimeout(() => setOpen(false), 200);
+  }, []);
 
   return (
-    <div className="flex items-center gap-1 text-xs tracking-wide">
-      {langs.map(({ code, label }, i) => (
-        <span key={code} className="flex items-center">
-          {i > 0 && <span className="text-charcoal/20 mx-0.5">·</span>}
-          <Link
-            href={langUrl(code, rawPath)}
-            className={`px-1 py-0.5 transition-colors ${
-              code === lang
-                ? 'text-charcoal font-medium'
-                : 'text-charcoal/40 hover:text-charcoal/70'
-            }`}
+    <div
+      ref={ref}
+      className="relative"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      {/* Trigger — current language */}
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="flex items-center gap-1 text-[12px] font-medium tracking-wider text-charcoal/60 hover:text-charcoal bg-charcoal/[0.04] hover:bg-charcoal/[0.08] rounded-full px-2.5 py-1.5 transition-all select-none"
+        aria-label="Switch language"
+        aria-expanded={open}
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="opacity-50 shrink-0">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M2 12h20" />
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+        </svg>
+        {currentLang.label}
+      </button>
+
+      {/* Dropdown */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: -4, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -4, scale: 0.95 }}
+            transition={{ duration: 0.15, ease: 'easeOut' }}
+            className="absolute top-full right-0 mt-1.5 bg-white rounded-xl shadow-lg shadow-black/[0.08] border border-black/[0.06] overflow-hidden min-w-[52px] z-50"
           >
-            {label}
-          </Link>
-        </span>
-      ))}
-    </div>
-  );
-}
-
-function MobileLangSwitcher({ lang }: { lang: Lang }) {
-  const rawPath = useRawPath(lang);
-
-  return (
-    <div className="flex items-center gap-0.5">
-      {langs.map(({ code, flag }) => (
-        <Link
-          key={code}
-          href={langUrl(code, rawPath)}
-          className={`text-base leading-none p-1 transition-opacity ${
-            code === lang ? 'opacity-100' : 'opacity-40 hover:opacity-70'
-          }`}
-        >
-          {flag}
-        </Link>
-      ))}
+            {otherLangs.map(({ code, label }) => (
+              <Link
+                key={code}
+                href={langUrl(code, rawPath)}
+                onClick={() => setOpen(false)}
+                className="block text-[12px] font-medium tracking-wider text-charcoal/50 hover:text-amber hover:bg-warm-sand/60 px-3 py-2 text-center transition-colors"
+              >
+                {label}
+              </Link>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
@@ -104,7 +151,7 @@ export default function Header({ lang }: { lang: Lang }) {
             </Link>
           ))}
           <div className="w-px h-4 bg-charcoal/10" />
-          <LangSwitcher lang={lang} />
+          <CompactLangSwitcher lang={lang} />
           <Link
             href={langUrl(lang, '/spenden')}
             className="bg-amber text-white text-[13px] font-medium px-5 py-2 rounded-full hover:bg-amber-600 transition-all hover:shadow-md hover:shadow-amber/15"
@@ -113,9 +160,9 @@ export default function Header({ lang }: { lang: Lang }) {
           </Link>
         </nav>
 
-        {/* Mobile: Lang Flags + Burger */}
+        {/* Mobile: Lang + Burger */}
         <div className="md:hidden flex items-center gap-1">
-          <MobileLangSwitcher lang={lang} />
+          <CompactLangSwitcher lang={lang} />
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
             className="relative w-10 h-10 flex flex-col justify-center items-center gap-[5px] -mr-2"
