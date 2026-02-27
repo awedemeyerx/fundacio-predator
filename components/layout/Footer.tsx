@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import { Lang } from '@/lib/types';
 import { siteConfig } from '@/lib/site.config';
@@ -5,6 +7,11 @@ import { langUrl } from '@/lib/hreflang';
 
 export default function Footer({ lang }: { lang: Lang }) {
   const { footer, projects } = siteConfig.content;
+
+  function handleCookieReset() {
+    localStorage.removeItem('cookie-consent');
+    window.dispatchEvent(new CustomEvent('cookie-reset'));
+  }
 
   return (
     <footer className="bg-charcoal text-white/80">
@@ -78,6 +85,14 @@ export default function Footer({ lang }: { lang: Lang }) {
                 >
                   {footer.legal.datenschutz.label[lang]}
                 </Link>
+              </li>
+              <li>
+                <button
+                  onClick={handleCookieReset}
+                  className="hover:text-amber transition-colors"
+                >
+                  {footer.legal.cookies.label[lang]}
+                </button>
               </li>
             </ul>
           </div>

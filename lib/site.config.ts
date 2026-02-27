@@ -182,6 +182,9 @@ export const siteConfig = {
           label: { de: 'Datenschutz', en: 'Privacy Policy', es: 'Política de Privacidad' } as Localized,
           href: '/datenschutz',
         },
+        cookies: {
+          label: { de: 'Cookie-Einstellungen', en: 'Cookie Settings', es: 'Configuración de Cookies' } as Localized,
+        },
       },
     },
   },

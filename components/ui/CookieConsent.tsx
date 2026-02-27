@@ -33,6 +33,12 @@ export default function CookieConsent({ lang }: { lang: Lang }) {
     if (!consent) {
       setVisible(true);
     }
+
+    function handleReset() {
+      setVisible(true);
+    }
+    window.addEventListener('cookie-reset', handleReset);
+    return () => window.removeEventListener('cookie-reset', handleReset);
   }, []);
 
   function handleAccept() {
