@@ -61,11 +61,19 @@ export default function AdminSidebar() {
         {user?.avatar_url && (
           <img src={user.avatar_url} alt="" className="w-8 h-8 rounded-full mb-2" />
         )}
-        <div className="text-xs text-charcoal-muted truncate">{user?.name || user?.email}</div>
+        <Link href="/admin/profile" className="block text-xs text-charcoal-muted truncate hover:text-amber transition-colors">
+          {user?.name || user?.email}
+        </Link>
         <div className="flex items-center gap-2 mt-1">
           <span className={`text-xs px-1.5 py-0.5 rounded-full ${isAdmin ? 'bg-amber/10 text-amber' : 'bg-charcoal/5 text-charcoal-muted'}`}>
             {user?.role || 'user'}
           </span>
+          <Link
+            href="/admin/profile"
+            className="text-xs text-charcoal-muted hover:text-amber transition-colors"
+          >
+            Profil
+          </Link>
           <button
             onClick={logout}
             className="text-sm text-charcoal-muted hover:text-amber transition-colors"

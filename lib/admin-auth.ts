@@ -52,6 +52,25 @@ export async function getAdminUser(): Promise<AdminUser | null> {
 
   if (data) return data as AdminUser;
 
+  // auth_uid mismatch (e.g. after Supabase migration) — try email lookup
+  if (session.user.email) {
+    const { data: emailUser } = await supabaseAdmin
+      .from('fundacio_admin_users')
+      .select('id, auth_uid, email, name, avatar_url, role')
+      .eq('email', session.user.email.toLowerCase())
+      .single();
+
+    if (emailUser) {
+      // Update auth_uid so future requests match directly
+      await supabaseAdmin
+        .from('fundacio_admin_users')
+        .update({ auth_uid: session.user.id, updated_at: new Date().toISOString() })
+        .eq('id', emailUser.id);
+
+      return { ...emailUser, auth_uid: session.user.id } as AdminUser;
+    }
+  }
+
   // Fallback: check ADMIN_MAIL env for bootstrap access
   const adminMail = process.env.ADMIN_MAIL || '';
   const isAllowedByEnv = adminMail

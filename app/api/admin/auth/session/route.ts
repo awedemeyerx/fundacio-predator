@@ -52,6 +52,34 @@ export async function GET(request: NextRequest) {
         },
       });
     }
+
+    // auth_uid mismatch (e.g. after Supabase migration) — try email lookup
+    if (session.user.email) {
+      const { data: emailUser } = await adminClient
+        .from('fundacio_admin_users')
+        .select('id, email, name, avatar_url, role')
+        .eq('email', session.user.email.toLowerCase())
+        .single();
+
+      if (emailUser) {
+        // Update auth_uid so future requests match directly
+        await adminClient
+          .from('fundacio_admin_users')
+          .update({ auth_uid: session.user.id, updated_at: new Date().toISOString() })
+          .eq('id', emailUser.id);
+
+        return NextResponse.json({
+          user: {
+            id: session.user.id,
+            adminId: emailUser.id,
+            email: emailUser.email,
+            name: emailUser.name,
+            avatar_url: emailUser.avatar_url,
+            role: emailUser.role,
+          },
+        });
+      }
+    }
   }
 
   // Fallback: if user is in ADMIN_MAIL, treat as admin

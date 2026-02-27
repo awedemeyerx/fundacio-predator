@@ -89,7 +89,7 @@ export default function BlockNoteEditor({ initialHTML, onChange }: BlockNoteEdit
       <BlockNoteView
         editor={editor}
         onChange={async () => {
-          const html = await editor.blocksToHTMLLossy(editor.document);
+          const html = await editor.blocksToFullHTML(editor.document);
           onChange(html);
         }}
         theme={fundacioTheme as any}
