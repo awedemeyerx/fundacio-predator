@@ -38,15 +38,29 @@ export default function AdminBlogPage() {
     setPosts(posts.filter(p => p.id !== id));
   }
 
+  async function handleToggleActive(id: number, active: boolean) {
+    const res = await fetch(`/api/admin/blog/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ active: !active }),
+    });
+    if (res.ok) {
+      setPosts(posts.map(p => p.id === id ? { ...p, active: !active } : p));
+    }
+  }
+
   const columns = [
     { key: 'title_de', label: 'Title' },
     {
       key: 'active',
       label: 'Status',
       render: (post: BlogPost) => (
-        <span className={`text-xs px-2 py-1 rounded-full ${post.active ? 'bg-forest/10 text-forest' : 'bg-charcoal/10 text-charcoal-muted'}`}>
+        <button
+          onClick={() => handleToggleActive(post.id, post.active)}
+          className={`text-xs px-2 py-1 rounded-full cursor-pointer transition-colors ${post.active ? 'bg-forest/10 text-forest hover:bg-forest/20' : 'bg-charcoal/10 text-charcoal-muted hover:bg-charcoal/20'}`}
+        >
           {post.active ? 'Active' : 'Draft'}
-        </span>
+        </button>
       ),
     },
     {

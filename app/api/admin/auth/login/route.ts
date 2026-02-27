@@ -3,7 +3,14 @@ import { createServerClient } from '@supabase/ssr';
 import { createClient } from '@supabase/supabase-js';
 
 export async function POST(request: NextRequest) {
-  const { email, password } = await request.json();
+  let email: string, password: string;
+  try {
+    const body = await request.json();
+    email = body.email;
+    password = body.password;
+  } catch {
+    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+  }
 
   if (!email || !password) {
     return NextResponse.json({ error: 'Email and password required' }, { status: 400 });

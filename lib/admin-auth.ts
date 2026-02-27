@@ -50,9 +50,27 @@ export async function getAdminUser(): Promise<AdminUser | null> {
     .eq('auth_uid', session.user.id)
     .single();
 
-  if (!data) return null;
+  if (data) return data as AdminUser;
 
-  return data as AdminUser;
+  // Fallback: check ADMIN_MAIL env for bootstrap access
+  const adminMail = process.env.ADMIN_MAIL || '';
+  const isAllowedByEnv = adminMail
+    .split(',')
+    .map((e: string) => e.trim().toLowerCase())
+    .includes((session.user.email || '').toLowerCase());
+
+  if (isAllowedByEnv) {
+    return {
+      id: 0,
+      auth_uid: session.user.id,
+      email: session.user.email || '',
+      name: null,
+      avatar_url: null,
+      role: 'admin',
+    };
+  }
+
+  return null;
 }
 
 /** Require admin role — returns user or null */

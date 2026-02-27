@@ -54,11 +54,18 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  // Fallback: return basic session info (user not in admin table)
+  // Fallback: if user is in ADMIN_MAIL, treat as admin
+  const adminMail = process.env.ADMIN_MAIL || '';
+  const isAllowedByEnv = adminMail
+    .split(',')
+    .map((e: string) => e.trim().toLowerCase())
+    .includes((session.user.email || '').toLowerCase());
+
   return NextResponse.json({
     user: {
       email: session.user.email,
       id: session.user.id,
+      role: isAllowedByEnv ? 'admin' : undefined,
     },
   });
 }
