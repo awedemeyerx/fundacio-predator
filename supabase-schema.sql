@@ -70,8 +70,33 @@ CREATE TABLE IF NOT EXISTS fundacio_campaigns (
   updated_at timestamptz DEFAULT now()
 );
 
+-- Donors (aggregated donor profiles)
+CREATE TABLE IF NOT EXISTS fundacio_donors (
+  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  email text UNIQUE,
+  first_name text,
+  last_name text,
+  display_name text,
+  wp_donor_id bigint,
+  total_donations int DEFAULT 0,
+  total_spent_cents bigint DEFAULT 0,
+  first_donation_at timestamptz,
+  last_donation_at timestamptz,
+  created_at timestamptz DEFAULT now()
+);
+
 -- Add campaign_id to donations
 ALTER TABLE fundacio_donations ADD COLUMN IF NOT EXISTS campaign_id bigint REFERENCES fundacio_campaigns(id);
+
+-- Add donor/payment tracking columns to donations
+ALTER TABLE fundacio_donations ADD COLUMN IF NOT EXISTS donor_id bigint REFERENCES fundacio_donors(id);
+ALTER TABLE fundacio_donations ADD COLUMN IF NOT EXISTS gateway text;
+ALTER TABLE fundacio_donations ADD COLUMN IF NOT EXISTS transaction_id text;
+ALTER TABLE fundacio_donations ADD COLUMN IF NOT EXISTS wp_donation_id bigint;
+ALTER TABLE fundacio_donations ADD COLUMN IF NOT EXISTS anonymous boolean DEFAULT false;
+
+-- Add legacy WP form reference to campaigns
+ALTER TABLE fundacio_campaigns ADD COLUMN IF NOT EXISTS wp_form_id bigint;
 
 -- Campaign progress view
 CREATE OR REPLACE VIEW fundacio_campaign_progress AS
@@ -139,3 +164,6 @@ CREATE INDEX IF NOT EXISTS idx_fundacio_donations_created ON fundacio_donations(
 CREATE INDEX IF NOT EXISTS idx_fundacio_campaigns_active ON fundacio_campaigns(active) WHERE active = true;
 CREATE INDEX IF NOT EXISTS idx_fundacio_admin_users_auth_uid ON fundacio_admin_users(auth_uid);
 CREATE INDEX IF NOT EXISTS idx_fundacio_admin_users_email ON fundacio_admin_users(email);
+CREATE INDEX IF NOT EXISTS idx_fundacio_donors_email ON fundacio_donors(email);
+CREATE INDEX IF NOT EXISTS idx_fundacio_donations_donor ON fundacio_donations(donor_id);
+CREATE INDEX IF NOT EXISTS idx_fundacio_donations_campaign ON fundacio_donations(campaign_id);

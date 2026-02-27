@@ -58,16 +58,66 @@ export async function POST(request: NextRequest) {
             if (campaignData) campaignId = campaignData.id;
           }
 
+          // Upsert donor profile
+          let donorId = null;
+          const donorEmail = session.customer_details?.email;
+          const donorName = session.customer_details?.name || '';
+          const nameParts = donorName.split(' ');
+          const firstName = nameParts[0] || null;
+          const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : null;
+
+          if (donorEmail) {
+            const { data: donor } = await supabaseAdmin
+              .from('fundacio_donors')
+              .upsert({
+                email: donorEmail.toLowerCase().trim(),
+                first_name: firstName,
+                last_name: lastName,
+                display_name: donorName || null,
+              }, { onConflict: 'email' })
+              .select('id')
+              .single();
+
+            if (donor) donorId = donor.id;
+          }
+
+          // Insert donation
           await supabaseAdmin.from('fundacio_donations').insert({
             stripe_session_id: session.id,
             amount_cents: session.amount_total || 0,
             currency: session.currency || 'eur',
-            donor_name: session.customer_details?.name || null,
-            donor_email: session.customer_details?.email || null,
+            donor_name: donorName || null,
+            donor_email: donorEmail || null,
+            donor_id: donorId,
             project: metadata.project !== 'general' ? metadata.project : null,
             campaign_id: campaignId,
+            gateway: 'stripe',
             status: 'completed',
           });
+
+          // Update donor aggregates
+          if (donorId) {
+            const { data: stats } = await supabaseAdmin
+              .from('fundacio_donations')
+              .select('amount_cents, created_at')
+              .eq('donor_id', donorId)
+              .eq('status', 'completed')
+              .order('created_at', { ascending: true });
+
+            if (stats && stats.length > 0) {
+              const totalCents = stats.reduce((sum, d) => sum + (d.amount_cents || 0), 0);
+              await supabaseAdmin
+                .from('fundacio_donors')
+                .update({
+                  total_donations: stats.length,
+                  total_spent_cents: totalCents,
+                  first_donation_at: stats[0].created_at,
+                  last_donation_at: stats[stats.length - 1].created_at,
+                })
+                .eq('id', donorId);
+            }
+          }
+
           console.log('Donation logged to Supabase:', session.id);
         } catch (dbError) {
           console.error('Failed to log donation:', dbError);
@@ -75,18 +125,18 @@ export async function POST(request: NextRequest) {
       }
 
       // Send confirmation email via Brevo
-      const donorEmail = session.customer_details?.email;
-      if (donorEmail && process.env.BREVO_API_KEY) {
+      const confirmEmail = session.customer_details?.email;
+      if (confirmEmail && process.env.BREVO_API_KEY) {
         try {
           const { sendDonationConfirmation } = await import('@/lib/email');
           await sendDonationConfirmation({
-            email: donorEmail,
+            email: confirmEmail,
             name: session.customer_details?.name || '',
             amount: (session.amount_total || 0) / 100,
             project: metadata.project,
             lang: (metadata.lang as 'de' | 'en' | 'es') || 'de',
           });
-          console.log('Confirmation email sent to:', donorEmail);
+          console.log('Confirmation email sent to:', confirmEmail);
         } catch (emailError) {
           console.error('Failed to send confirmation email:', emailError);
         }
