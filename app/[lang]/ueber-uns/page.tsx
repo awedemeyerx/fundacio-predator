@@ -4,6 +4,7 @@ import Footer from '@/components/layout/Footer';
 import FadeIn from '@/components/ui/FadeIn';
 import ContactForm from '@/components/sections/ContactForm';
 import Link from 'next/link';
+import Image from 'next/image';
 import { langUrl } from '@/lib/hreflang';
 
 const content = {
@@ -172,9 +173,23 @@ export default function UeberUnsPage({ params }: { params: { lang: string } }) {
             <h1 className="font-serif text-4xl sm:text-5xl font-bold text-charcoal mb-6">
               {c.subtitle}
             </h1>
-            <p className="text-lg text-charcoal-body leading-relaxed max-w-2xl mb-16">
+            <p className="text-lg text-charcoal-body leading-relaxed max-w-2xl mb-10">
               {c.intro}
             </p>
+          </FadeIn>
+
+          {/* Hero image */}
+          <FadeIn delay={0.05}>
+            <div className="aspect-[2.5/1] relative rounded-2xl overflow-hidden mb-16">
+              <Image
+                src="/images/about/charity-hero.png"
+                alt="Fundació Predator"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 896px"
+                priority
+              />
+            </div>
           </FadeIn>
 
           {/* Who we are */}
@@ -258,10 +273,23 @@ export default function UeberUnsPage({ params }: { params: { lang: string } }) {
 
           {/* Mallorca */}
           <FadeIn delay={0.4}>
-            <h2 className="font-serif text-2xl font-bold text-charcoal mb-4">
-              {c.mallorcaTitle}
-            </h2>
-            <p className="text-charcoal-body leading-relaxed mb-12">{c.mallorca}</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center mb-12">
+              <div>
+                <h2 className="font-serif text-2xl font-bold text-charcoal mb-4">
+                  {c.mallorcaTitle}
+                </h2>
+                <p className="text-charcoal-body leading-relaxed">{c.mallorca}</p>
+              </div>
+              <div className="aspect-[4/3] relative rounded-2xl overflow-hidden">
+                <Image
+                  src="/images/about/girl-with-heart.webp"
+                  alt="Fundació Predator — Mallorca"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 448px"
+                />
+              </div>
+            </div>
           </FadeIn>
 
           {/* How to help */}

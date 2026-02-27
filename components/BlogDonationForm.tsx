@@ -8,21 +8,33 @@ const content = {
   de: {
     heading: 'Hilf uns mit Deiner Spende,',
     heading2: 'gemeinsam tun wir noch mehr Gutes!',
-    body: 'Versprochen: Nicht ein Cent von Deiner Spende wird für Bürokratie draufgehen. Weder bei uns. Noch in unseren Projekten! Wenn Du über eine größere Spende nachdenkst, können wir gerne Patenschaften für Projekte aufbauen. Sowohl für Firmen als auch für Privatleute. Deine Zuwendungen an die Fundació Predator sind Zuwendungen an eine gemeinnützige Körperschaft und steuerlich sowohl in Deutschland wie auch in Spanien wirksam.',
+    body: [
+      'Versprochen: Nicht ein Cent von Deiner Spende wird für Bürokratie draufgehen. Weder bei uns. Noch in unseren Projekten!',
+      'Wenn Du über eine größere Spende nachdenkst, können wir gerne Patenschaften für Projekte aufbauen. Sowohl für Firmen als auch für Privatleute.',
+      'Deine Zuwendungen an die Fundació Predator sind Zuwendungen an eine gemeinnützige Körperschaft und steuerlich sowohl in Deutschland wie auch in Spanien wirksam.',
+    ],
     customAmount: 'Eigener Betrag',
     donateButton: 'Jetzt spenden',
   },
   en: {
     heading: 'Help us with your donation,',
     heading2: 'together we do even more good!',
-    body: 'We promise: not a single cent of your donation goes towards bureaucracy. Neither with us, nor in our projects! If you are considering a larger donation, we would be happy to set up project sponsorships — for companies and individuals alike. Your contributions to the Fundació Predator are contributions to a charitable organisation and are tax-deductible in both Germany and Spain.',
+    body: [
+      'We promise: not a single cent of your donation goes towards bureaucracy. Neither with us, nor in our projects!',
+      'If you are considering a larger donation, we would be happy to set up project sponsorships — for companies and individuals alike.',
+      'Your contributions to the Fundació Predator are contributions to a charitable organisation and are tax-deductible in both Germany and Spain.',
+    ],
     customAmount: 'Custom amount',
     donateButton: 'Donate now',
   },
   es: {
     heading: 'Ayúdanos con tu donación,',
     heading2: '¡juntos hacemos aún más bien!',
-    body: 'Prometido: ni un solo céntimo de tu donación se destina a burocracia. Ni con nosotros, ni en nuestros proyectos. Si estás pensando en una donación mayor, estaremos encantados de establecer patrocinios de proyectos, tanto para empresas como para particulares. Tus contribuciones a la Fundació Predator son contribuciones a una entidad benéfica y son deducibles fiscalmente tanto en Alemania como en España.',
+    body: [
+      'Prometido: ni un solo céntimo de tu donación se destina a burocracia. Ni con nosotros, ni en nuestros proyectos.',
+      'Si estás pensando en una donación mayor, estaremos encantados de establecer patrocinios de proyectos, tanto para empresas como para particulares.',
+      'Tus contribuciones a la Fundació Predator son contribuciones a una entidad benéfica y son deducibles fiscalmente tanto en Alemania como en España.',
+    ],
     customAmount: 'Cantidad personalizada',
     donateButton: 'Donar ahora',
   },
@@ -68,9 +80,11 @@ export default function BlogDonationForm({ lang }: { lang: Lang }) {
         <h2 className="font-serif text-2xl sm:text-3xl font-bold text-charcoal leading-tight">
           {c.heading}<br />{c.heading2}
         </h2>
-        <p className="text-[15px] text-charcoal-body/70 mt-4 max-w-lg mx-auto leading-relaxed">
-          {c.body}
-        </p>
+        <div className="text-[15px] text-charcoal-body/70 mt-4 max-w-lg mx-auto leading-relaxed space-y-3">
+          {c.body.map((paragraph, i) => (
+            <p key={i}>{paragraph}</p>
+          ))}
+        </div>
       </div>
 
       {/* Amount buttons */}

@@ -17,8 +17,10 @@ export default function AdminLoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [resetMode, setResetMode] = useState(false);
 
   useEffect(() => {
     const errorParam = searchParams.get('error');
@@ -54,6 +56,30 @@ export default function AdminLoginPage() {
     }
   }
 
+  async function handleResetPassword(e: React.FormEvent) {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+    setLoading(true);
+
+    try {
+      const res = await fetch('/api/admin/auth/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+
+      if (res.ok) {
+        setSuccess('Falls ein Konto mit dieser E-Mail existiert, wurde ein Reset-Link gesendet.');
+      } else {
+        setError('Fehler beim Senden.');
+      }
+    } catch {
+      setError('Netzwerkfehler');
+    }
+    setLoading(false);
+  }
+
   async function handleGoogleLogin() {
     setError('');
     setGoogleLoading(true);
@@ -85,6 +111,12 @@ export default function AdminLoginPage() {
             </div>
           )}
 
+          {success && (
+            <div className="bg-green-50 text-green-700 text-sm px-4 py-3 rounded-lg">
+              {success}
+            </div>
+          )}
+
           {/* Google OAuth */}
           <button
             onClick={handleGoogleLogin}
@@ -110,37 +142,76 @@ export default function AdminLoginPage() {
           </div>
 
           {/* Email/Password */}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-charcoal mb-1">Email</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full px-4 py-2.5 border border-charcoal/10 rounded-xl text-charcoal focus:outline-none focus:ring-2 focus:ring-amber/30 focus:border-amber bg-warm-white"
-              />
-            </div>
+          {resetMode ? (
+            <form onSubmit={handleResetPassword} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-charcoal mb-1">Email</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="w-full px-4 py-2.5 border border-charcoal/10 rounded-xl text-charcoal focus:outline-none focus:ring-2 focus:ring-amber/30 focus:border-amber bg-warm-white"
+                />
+              </div>
 
-            <div>
-              <label className="block text-sm font-medium text-charcoal mb-1">Password</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="w-full px-4 py-2.5 border border-charcoal/10 rounded-xl text-charcoal focus:outline-none focus:ring-2 focus:ring-amber/30 focus:border-amber bg-warm-white"
-              />
-            </div>
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-amber text-white font-medium py-3 rounded-full hover:bg-amber-600 transition-all disabled:opacity-50"
+              >
+                {loading ? '...' : 'Link senden'}
+              </button>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-amber text-white font-medium py-3 rounded-full hover:bg-amber-600 transition-all disabled:opacity-50"
-            >
-              {loading ? '...' : 'Login'}
-            </button>
-          </form>
+              <button
+                type="button"
+                onClick={() => { setResetMode(false); setError(''); setSuccess(''); }}
+                className="w-full text-sm text-charcoal-muted hover:text-charcoal transition-colors"
+              >
+                Zurück zum Login
+              </button>
+            </form>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-charcoal mb-1">Email</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="w-full px-4 py-2.5 border border-charcoal/10 rounded-xl text-charcoal focus:outline-none focus:ring-2 focus:ring-amber/30 focus:border-amber bg-warm-white"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-charcoal mb-1">Password</label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="w-full px-4 py-2.5 border border-charcoal/10 rounded-xl text-charcoal focus:outline-none focus:ring-2 focus:ring-amber/30 focus:border-amber bg-warm-white"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-amber text-white font-medium py-3 rounded-full hover:bg-amber-600 transition-all disabled:opacity-50"
+              >
+                {loading ? '...' : 'Login'}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => { setResetMode(true); setError(''); setSuccess(''); }}
+                className="w-full text-sm text-charcoal-muted hover:text-charcoal transition-colors"
+              >
+                Passwort vergessen?
+              </button>
+            </form>
+          )}
         </div>
       </div>
     </div>

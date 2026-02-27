@@ -43,17 +43,51 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL('/admin/login?error=no_session', request.url));
   }
 
-  // Check if user exists in fundacio_admin_users
+  // Check if user exists in fundacio_admin_users (by auth_uid OR email)
   if (supabaseServiceKey) {
     const adminClient = createClient(supabaseUrl, supabaseServiceKey);
-    const { data: adminUser } = await adminClient
+    const userEmail = session.user.email?.toLowerCase();
+
+    // Try by auth_uid first
+    let { data: adminUser } = await adminClient
       .from('fundacio_admin_users')
       .select('id')
       .eq('auth_uid', session.user.id)
       .single();
 
-    if (!adminUser) {
-      // Sign out the unauthorized user
+    // Fallback: find by email and link auth_uid
+    if (!adminUser && userEmail) {
+      const { data: emailUser } = await adminClient
+        .from('fundacio_admin_users')
+        .select('id')
+        .eq('email', userEmail)
+        .single();
+
+      if (emailUser) {
+        // Link Google auth_uid to existing admin user
+        await adminClient
+          .from('fundacio_admin_users')
+          .update({ auth_uid: session.user.id, updated_at: new Date().toISOString() })
+          .eq('id', emailUser.id);
+        adminUser = emailUser;
+      }
+    }
+
+    // Also check ADMIN_MAIL env fallback
+    if (!adminUser && userEmail) {
+      const adminMail = process.env.ADMIN_MAIL || '';
+      const isAllowedByEnv = adminMail
+        .split(',')
+        .map((e: string) => e.trim().toLowerCase())
+        .includes(userEmail);
+
+      if (!isAllowedByEnv) {
+        await supabase.auth.signOut();
+        return NextResponse.redirect(new URL('/admin/login?error=not_authorized', request.url));
+      }
+    }
+
+    if (!adminUser && !userEmail) {
       await supabase.auth.signOut();
       return NextResponse.redirect(new URL('/admin/login?error=not_authorized', request.url));
     }
