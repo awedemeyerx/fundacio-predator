@@ -25,8 +25,6 @@ const content = {
     projectLabel: 'Für ein bestimmtes Projekt? (optional)',
     general: 'Allgemeine Spende',
     donateButton: 'Jetzt spenden',
-    orTransfer: 'Oder per Banküberweisung',
-    bankDetails: 'Bankverbindung',
     taxNote: 'Als gemeinnützige Stiftung stellen wir Spendenquittungen aus.',
   },
   en: {
@@ -37,8 +35,6 @@ const content = {
     projectLabel: 'For a specific project? (optional)',
     general: 'General donation',
     donateButton: 'Donate now',
-    orTransfer: 'Or by bank transfer',
-    bankDetails: 'Bank details',
     taxNote: 'As a charitable foundation, we issue donation receipts.',
   },
   es: {
@@ -49,8 +45,6 @@ const content = {
     projectLabel: '¿Para un proyecto específico? (opcional)',
     general: 'Donación general',
     donateButton: 'Donar ahora',
-    orTransfer: 'O por transferencia bancaria',
-    bankDetails: 'Datos bancarios',
     taxNote: 'Como fundación benéfica, emitimos recibos de donación.',
   },
 };
@@ -237,20 +231,6 @@ function SpendenContent({ params }: { params: { lang: string } }) {
             </div>
           </FadeIn>
 
-          {/* Bank Transfer */}
-          <FadeIn delay={0.2}>
-            <div className="mt-12 bg-warm-sand/50 rounded-2xl p-8">
-              <h2 className="font-serif text-xl font-bold text-charcoal mb-4">
-                {c.orTransfer}
-              </h2>
-              <div className="space-y-2 text-sm text-charcoal-body">
-                <p><span className="text-charcoal font-medium">IBAN:</span> ES00 0000 0000 0000 0000 0000</p>
-                <p><span className="text-charcoal font-medium">BIC:</span> XXXXXXXX</p>
-                <p><span className="text-charcoal font-medium">{lang === 'de' ? 'Empfänger' : lang === 'es' ? 'Beneficiario' : 'Beneficiary'}:</span> Fundació Predator</p>
-                <p><span className="text-charcoal font-medium">{lang === 'de' ? 'Verwendungszweck' : lang === 'es' ? 'Concepto' : 'Reference'}:</span> Spende / Donation</p>
-              </div>
-            </div>
-          </FadeIn>
         </div>
       </main>
       <Footer lang={lang} />
