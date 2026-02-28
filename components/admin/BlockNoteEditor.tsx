@@ -85,14 +85,14 @@ export default function BlockNoteEditor({ initialHTML, onChange }: BlockNoteEdit
   }, [initialHTML, editor]);
 
   return (
-    <div className="border border-charcoal/10 rounded-xl overflow-hidden bg-white min-h-[500px]">
+    <div className="border border-charcoal/10 rounded-xl overflow-hidden bg-white min-h-[500px]" data-mantine-color-scheme="light">
       <BlockNoteView
         editor={editor}
         onChange={async () => {
           const html = await editor.blocksToFullHTML(editor.document);
           onChange(html);
         }}
-        theme={fundacioTheme as any}
+        theme="light"
       />
     </div>
   );

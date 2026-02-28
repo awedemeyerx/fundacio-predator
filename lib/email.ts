@@ -142,7 +142,10 @@ async function sendBrevoEmail(to: string, subject: string, html: string) {
     body: JSON.stringify({
       sender: { name: 'Fundació Predator', email: 'info@fundaciopredator.org' },
       to: [{ email: to }],
-      bcc: [{ email: process.env.ADMIN_MAIL || 'info@fundaciopredator.org' }],
+      bcc: (process.env.ADMIN_MAIL || 'info@fundaciopredator.org')
+        .split(',')
+        .map(e => ({ email: e.trim() }))
+        .filter(e => e.email !== to),
       subject,
       htmlContent: html,
     }),
@@ -179,7 +182,8 @@ export async function sendAdminInvite(params: AdminInviteParams) {
             <tr><td style="padding:32px 24px;">
               <h2 style="margin:0 0 16px;color:#1a1a1a;font-size:20px;">Einladung zum Admin-Bereich</h2>
               <p style="margin:0 0 16px;color:#4a4a4a;font-size:15px;">${greeting},</p>
-              <p style="margin:0 0 24px;color:#4a4a4a;font-size:15px;">du wurdest zum Admin-Bereich der Fundació Predator eingeladen. Klicke auf den Button, um deinen Zugang zu aktivieren und ein Passwort zu setzen.</p>
+              <p style="margin:0 0 16px;color:#4a4a4a;font-size:15px;">herzlich willkommen zur Fundació Predator. Wir freuen uns auf Deine Mitarbeit und laden Dich dazu ein, Deinen Account freizuschalten.</p>
+              <p style="margin:0 0 24px;color:#4a4a4a;font-size:15px;">Bitte klicke auf den Button, um Deinen Zugang zu aktivieren und ein Passwort zu setzen.</p>
               <div style="text-align:center;margin:0 0 24px;">
                 <a href="${inviteLink}" style="display:inline-block;background:#E8722A;color:#fff;font-size:15px;font-weight:600;text-decoration:none;padding:14px 28px;border-radius:99px;">Zugang aktivieren</a>
               </div>
