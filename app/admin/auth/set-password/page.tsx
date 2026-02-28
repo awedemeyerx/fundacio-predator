@@ -27,12 +27,25 @@ export default function SetPasswordPage() {
     setLoading(true);
 
     const supabase = createSupabaseBrowser();
-    const { error } = await supabase.auth.updateUser({ password });
+    const { data, error } = await supabase.auth.updateUser({ password });
 
     if (error) {
       setError(error.message);
       setLoading(false);
       return;
+    }
+
+    // Sync the updated session to server-side cookies
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+      await fetch('/api/admin/auth/set-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          access_token: session.access_token,
+          refresh_token: session.refresh_token,
+        }),
+      });
     }
 
     router.push('/admin/dashboard');

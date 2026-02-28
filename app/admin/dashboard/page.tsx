@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import AdminSidebar from '@/components/admin/AdminSidebar';
 import AdminHeader from '@/components/admin/AdminHeader';
@@ -25,9 +26,17 @@ interface RecentDonation {
 }
 
 export default function DashboardPage() {
-  const { isAdmin } = useAdminAuth();
+  const router = useRouter();
+  const { isAdmin, isEditor } = useAdminAuth();
   const [stats, setStats] = useState<Stats>({ blogPosts: 0, donations: 0, totalRaised: 0, contacts: 0, campaigns: 0 });
   const [recentDonations, setRecentDonations] = useState<RecentDonation[]>([]);
+
+  // Editors go straight to the blog list — no dashboard for them
+  useEffect(() => {
+    if (isEditor && !isAdmin) {
+      router.replace('/admin/blog');
+    }
+  }, [isEditor, isAdmin, router]);
 
   useEffect(() => {
     const fetches: Promise<Response>[] = [
