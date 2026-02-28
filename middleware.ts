@@ -93,6 +93,11 @@ export async function middleware(request: NextRequest) {
     return response;
   }
 
+  // --- /link page: skip language routing ---
+  if (pathname === '/link' || pathname.startsWith('/link/')) {
+    return NextResponse.next();
+  }
+
   // --- Public routes: language routing ---
   const segments = pathname.split('/').filter(Boolean);
   const firstSegment = segments[0] || '';
