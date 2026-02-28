@@ -30,33 +30,36 @@ export default function DashboardPage() {
   const [recentDonations, setRecentDonations] = useState<RecentDonation[]>([]);
 
   useEffect(() => {
-    const fetches: Promise<Response>[] = [
-      fetch('/api/admin/blog').then(r => r.json()).catch(() => ({ posts: [] })),
-      fetch('/api/admin/donations').then(r => r.json()).catch(() => ({ donations: [] })),
-    ];
+    async function load() {
+      const safeFetch = (url: string) =>
+        fetch(url).then(r => {
+          if (!r.ok) return {};
+          return r.json();
+        }).catch(() => ({}));
 
-    if (isAdmin) {
-      fetches.push(
-        fetch('/api/admin/contacts').then(r => r.json()).catch(() => ({ contacts: [] })),
-        fetch('/api/admin/campaigns').then(r => r.json()).catch(() => ({ campaigns: [] })),
-      );
-    }
+      const [blogData, donationData, contactData, campaignData] = await Promise.all([
+        safeFetch('/api/admin/blog'),
+        safeFetch('/api/admin/donations'),
+        isAdmin ? safeFetch('/api/admin/contacts') : Promise.resolve({}),
+        isAdmin ? safeFetch('/api/admin/campaigns') : Promise.resolve({}),
+      ]);
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    Promise.all(fetches).then((results: any[]) => {
-      const blogData = results[0];
-      const donationData = results[1];
-      const donations = donationData.donations || [];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const donations = (donationData as any).donations || [];
 
       setStats({
-        blogPosts: (blogData.posts || []).length,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        blogPosts: ((blogData as any).posts || []).length,
         donations: donations.length,
         totalRaised: donations.reduce((sum: number, d: { amount_cents: number }) => sum + (d.amount_cents || 0), 0),
-        contacts: isAdmin ? (results[2]?.contacts || []).length : 0,
-        campaigns: isAdmin ? (results[3]?.campaigns || []).length : 0,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        contacts: ((contactData as any).contacts || []).length,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        campaigns: ((campaignData as any).campaigns || []).length,
       });
       setRecentDonations(donations.slice(0, 5));
-    });
+    }
+    load();
   }, [isAdmin]);
 
   return (
@@ -67,11 +70,11 @@ export default function DashboardPage() {
         <div className="p-8 space-y-8">
           <div className={`grid grid-cols-1 sm:grid-cols-2 ${isAdmin ? 'lg:grid-cols-4' : 'lg:grid-cols-2'} gap-6`}>
             <StatsCard label="Blog Posts" value={stats.blogPosts} href="/admin/blog" delay={0} />
-            <StatsCard label="Spenden" value={stats.donations} sub={`${(stats.totalRaised / 100).toFixed(2)} EUR`} href={isAdmin ? '/admin/donations' : undefined} delay={1} />
+            <StatsCard label="Spenden" value={stats.donations} sub={`${(stats.totalRaised / 100).toFixed(2)} EUR`} href="/admin/donations" delay={1} />
             {isAdmin && (
               <>
                 <StatsCard label="Projekte" value={stats.campaigns} href="/admin/campaigns" delay={2} />
-                <StatsCard label="Kontakte" value={stats.contacts} href="/admin/contacts" delay={3} />
+                <StatsCard label="Nachrichten" value={stats.contacts} href="/admin/contacts" delay={3} />
               </>
             )}
           </div>

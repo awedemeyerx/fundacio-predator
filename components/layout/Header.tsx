@@ -158,6 +158,13 @@ export default function Header({ lang }: { lang: Lang }) {
           >
             {siteConfig.content.hero.cta[lang]}
           </Link>
+          <div className="w-px h-4 bg-charcoal/10" />
+          <Link
+            href="/admin/login"
+            className="text-[13px] text-charcoal/40 hover:text-charcoal transition-colors tracking-wide"
+          >
+            Login
+          </Link>
         </nav>
 
         {/* Mobile: Lang + Burger */}
@@ -209,6 +216,14 @@ export default function Header({ lang }: { lang: Lang }) {
                 className="bg-amber text-white text-center font-medium px-5 py-3.5 rounded-full hover:bg-amber-600 transition-colors mt-1"
               >
                 {siteConfig.content.hero.cta[lang]}
+              </Link>
+              <div className="h-px bg-charcoal/10 my-2" />
+              <Link
+                href="/admin/login"
+                onClick={() => setMobileOpen(false)}
+                className="text-[15px] text-charcoal/40 hover:text-amber transition-colors"
+              >
+                Login
               </Link>
             </nav>
           </motion.div>

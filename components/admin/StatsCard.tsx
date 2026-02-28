@@ -66,7 +66,7 @@ export default function StatsCard({ label, value, sub, href, delay = 0 }: StatsC
     'bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04)]',
     'transition-all duration-300 ease-out',
     'animate-fade-in-up',
-    href ? 'hover:border-amber/30 hover:shadow-md hover:-translate-y-0.5 cursor-pointer' : '',
+    href ? 'block hover:border-amber/30 hover:shadow-md hover:-translate-y-0.5 cursor-pointer' : '',
   ].join(' ');
 
   const style = { animationDelay: `${delay * 75}ms`, animationFillMode: 'backwards' as const };
