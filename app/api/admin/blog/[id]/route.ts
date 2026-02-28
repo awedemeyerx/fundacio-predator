@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { supabaseAdmin } from '@/lib/supabase';
 import { getAdminUser } from '@/lib/admin-auth';
 
@@ -86,6 +87,10 @@ export async function PUT(
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
+  // Revalidate blog pages so changes (cover image, content, etc.) appear immediately
+  revalidatePath('/[lang]/blog/[slug]', 'page');
+  revalidatePath('/[lang]/blog', 'page');
+
   return NextResponse.json({ post: data });
 }
 
@@ -110,6 +115,9 @@ export async function DELETE(
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
+
+  revalidatePath('/[lang]/blog/[slug]', 'page');
+  revalidatePath('/[lang]/blog', 'page');
 
   return NextResponse.json({ success: true });
 }
