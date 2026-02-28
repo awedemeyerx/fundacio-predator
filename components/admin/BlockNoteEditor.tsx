@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useCallback } from 'react';
 import { useCreateBlockNote } from '@blocknote/react';
 import { BlockNoteView } from '@blocknote/mantine';
 import '@blocknote/mantine/style.css';
@@ -71,6 +71,7 @@ export default function BlockNoteEditor({ initialHTML, onChange }: BlockNoteEdit
 
   // Load initial HTML only once on mount
   const loaded = useRef(false);
+  const userHasEdited = useRef(false);
   useEffect(() => {
     if (loaded.current || !initialHTML || !editor) return;
     loaded.current = true;
@@ -78,20 +79,30 @@ export default function BlockNoteEditor({ initialHTML, onChange }: BlockNoteEdit
       try {
         const blocks = await editor.tryParseHTMLToBlocks(initialHTML);
         editor.replaceBlocks(editor.document, blocks);
+        // Allow a tick for BlockNote to settle after replaceBlocks,
+        // then enable onChange tracking
+        setTimeout(() => {
+          userHasEdited.current = true;
+        }, 200);
       } catch {
         // ignore parse errors on initial load
+        userHasEdited.current = true;
       }
     })();
   }, [initialHTML, editor]);
+
+  const handleChange = useCallback(async () => {
+    // Skip the onChange fired by initial HTML parse + replaceBlocks
+    if (!userHasEdited.current) return;
+    const html = await editor.blocksToFullHTML(editor.document);
+    onChange(html);
+  }, [editor, onChange]);
 
   return (
     <div className="border border-charcoal/10 rounded-xl overflow-hidden bg-white min-h-[500px]" data-mantine-color-scheme="light">
       <BlockNoteView
         editor={editor}
-        onChange={async () => {
-          const html = await editor.blocksToFullHTML(editor.document);
-          onChange(html);
-        }}
+        onChange={handleChange}
         theme="light"
       />
     </div>
