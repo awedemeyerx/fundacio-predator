@@ -74,7 +74,7 @@ export default async function LinkPage({
 
         {/* Subtitle with sparkle separator */}
         <p className="text-charcoal-muted text-sm mt-1.5 flex items-center gap-2">
-          <span>Images of Humans</span>
+          <span>Help us help others</span>
           <span className="text-gold text-xs">&#10022;</span>
           <span>Mallorca</span>
         </p>
