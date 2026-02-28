@@ -226,8 +226,6 @@ const projectContent: Record<
       cta: 'Mallorca no es todo lujo. Muchas personas tienen dificultades económicas — no solo por la dependencia del turismo, sino también por una red social más frágil. Ayúdanos a seguir ayudando.',
     },
   },
-};
-
   'si-mallorca': {
     de: {
       description:
