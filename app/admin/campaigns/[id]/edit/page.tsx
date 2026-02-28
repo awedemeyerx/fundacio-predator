@@ -20,7 +20,7 @@ export default function EditCampaignPage({ params }: { params: { id: string } })
   }, [params.id]);
 
   return (
-    <div className="flex min-h-screen bg-warm-sand">
+    <div className="flex min-h-screen bg-[#FAFBFC]">
       <AdminSidebar />
       <div className="flex-1">
         <AdminHeader title="Projekt bearbeiten" />
