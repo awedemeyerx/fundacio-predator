@@ -54,7 +54,7 @@ export default function AdminContactsPage() {
     <div className="flex min-h-screen bg-[#FAFBFC]">
       <AdminSidebar />
       <div className="flex-1">
-        <AdminHeader title="Kontakte" />
+        <AdminHeader title="Nachrichten" />
         <div className="p-8">
           {loading ? (
             <p className="text-charcoal-muted text-sm">Loading...</p>
