@@ -60,6 +60,12 @@ export async function POST(request: NextRequest) {
   let authUid: string = existing?.auth_uid || '';
   let inviteLink: string | null = null;
 
+  // We build our own invite URL pointing to an intermediate page.
+  // This prevents email security scanners from consuming the one-time token.
+  // The intermediate page shows a button; only when clicked, verifyOtp() is called.
+  let tokenHash: string | null = null;
+  let tokenType: string = 'invite';
+
   if (!isResend) {
     // New user: try invite link first
     const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
@@ -87,24 +93,26 @@ export async function POST(request: NextRequest) {
       }
     } else {
       authUid = linkData.user.id;
-      inviteLink = linkData.properties.action_link;
+      tokenHash = linkData.properties.hashed_token;
     }
   }
 
-  // If no invite link yet (existing auth user or resend), generate a magic link
-  if (!inviteLink) {
+  // If no token yet (existing auth user or resend), generate a magic link
+  if (!tokenHash) {
     const { data: magicData } = await supabaseAdmin.auth.admin.generateLink({
       type: 'magiclink',
       email: email.toLowerCase(),
       options: { redirectTo },
     });
-    if (magicData?.properties?.action_link) {
-      inviteLink = magicData.properties.action_link;
+    if (magicData?.properties?.hashed_token) {
+      tokenHash = magicData.properties.hashed_token;
+      tokenType = 'magiclink';
     }
   }
 
-  // Send invite email via Brevo
-  if (inviteLink) {
+  // Build invite URL pointing to our intermediate page (not Supabase's verify endpoint)
+  if (tokenHash) {
+    const inviteLink = `https://fundaciopredator.org/admin/auth/accept-invite?token_hash=${tokenHash}&type=${tokenType}`;
     try {
       await sendAdminInvite({ email: email.toLowerCase(), name: name || existing?.name || null, inviteLink });
     } catch (emailErr) {
