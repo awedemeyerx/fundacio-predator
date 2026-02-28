@@ -65,34 +65,51 @@ export default function LinkManager({ initialLinks }: { initialLinks: LinkItem[]
   const [form, setForm] = useState<Omit<LinkItem, 'id' | 'sort_order'>>(emptyLink());
   const [creating, setCreating] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function handleCreate() {
     setSaving(true);
-    const res = await fetch('/api/admin/links', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form),
-    });
-    if (res.ok) {
-      const { link } = await res.json();
-      setLinks([...links, link]);
-      setForm(emptyLink());
-      setCreating(false);
+    setError(null);
+    try {
+      const res = await fetch('/api/admin/links', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+      if (res.ok) {
+        const { link } = await res.json();
+        setLinks([...links, link]);
+        setForm(emptyLink());
+        setCreating(false);
+      } else {
+        const body = await res.json().catch(() => ({}));
+        setError(body.error || `Fehler ${res.status}`);
+      }
+    } catch {
+      setError('Netzwerkfehler');
     }
     setSaving(false);
   }
 
   async function handleUpdate(id: string) {
     setSaving(true);
-    const res = await fetch('/api/admin/links', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id, ...form }),
-    });
-    if (res.ok) {
-      const { link } = await res.json();
-      setLinks(links.map((l) => (l.id === id ? link : l)));
-      setEditing(null);
+    setError(null);
+    try {
+      const res = await fetch('/api/admin/links', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, ...form }),
+      });
+      if (res.ok) {
+        const { link } = await res.json();
+        setLinks(links.map((l) => (l.id === id ? link : l)));
+        setEditing(null);
+      } else {
+        const body = await res.json().catch(() => ({}));
+        setError(body.error || `Fehler ${res.status}`);
+      }
+    } catch {
+      setError('Netzwerkfehler');
     }
     setSaving(false);
   }
@@ -154,6 +171,12 @@ export default function LinkManager({ initialLinks }: { initialLinks: LinkItem[]
 
   return (
     <div className="space-y-4">
+      {error && (
+        <div className="bg-red-50 text-red-600 text-sm px-4 py-3 rounded-lg flex items-center justify-between">
+          {error}
+          <button onClick={() => setError(null)} className="text-red-400 hover:text-red-600 ml-4">&times;</button>
+        </div>
+      )}
       {/* Link cards */}
       {links.map((link, i) => (
         <div key={link.id} className="bg-white rounded-xl border border-charcoal/5 overflow-hidden">
@@ -307,7 +330,7 @@ function LinkForm({
         />
       </div>
       <input
-        type="url"
+        type="text"
         placeholder="URL"
         value={form.url}
         onChange={(e) => setForm({ ...form, url: e.target.value })}

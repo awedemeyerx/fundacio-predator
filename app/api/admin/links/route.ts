@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { getAdminUser } from '@/lib/admin-auth';
 
 export async function GET() {
+  const user = await getAdminUser();
+  if (!user) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   if (!supabaseAdmin) {
     return NextResponse.json({ error: 'Not configured' }, { status: 500 });
   }
@@ -15,6 +18,8 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  const user = await getAdminUser();
+  if (!user) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   if (!supabaseAdmin) {
     return NextResponse.json({ error: 'Not configured' }, { status: 500 });
   }
@@ -26,7 +31,7 @@ export async function POST(req: NextRequest) {
     .select('sort_order')
     .order('sort_order', { ascending: false })
     .limit(1)
-    .single();
+    .maybeSingle();
 
   const nextOrder = (maxRow?.sort_order ?? -1) + 1;
 
@@ -49,6 +54,8 @@ export async function POST(req: NextRequest) {
 }
 
 export async function PUT(req: NextRequest) {
+  const user = await getAdminUser();
+  if (!user) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   if (!supabaseAdmin) {
     return NextResponse.json({ error: 'Not configured' }, { status: 500 });
   }
@@ -91,6 +98,8 @@ export async function PUT(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
+  const user = await getAdminUser();
+  if (!user) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   if (!supabaseAdmin) {
     return NextResponse.json({ error: 'Not configured' }, { status: 500 });
   }
