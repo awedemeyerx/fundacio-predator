@@ -36,11 +36,9 @@ const projectImages: Record<string, { hero: string; gallery: { src: string; alt:
     ],
   },
   'si-mallorca': {
-    hero: '/images/projects/si-mallorca/si-mallorca-1.jpg',
+    hero: 'https://adwrup9jyslnyjhd.public.blob.vercel-storage.com/fundacio-predator/simallorca/fundacio-predator-mit-si-mallorca-1.jpg',
     gallery: [
-      { src: '/images/projects/si-mallorca/si-mallorca-1.jpg', alt: 'Si Mallorca — Sachspenden für Familien' },
-      { src: '/images/projects/si-mallorca/si-mallorca-2.jpg', alt: 'Anja Dauber bei der Spendenausgabe' },
-      { src: '/images/projects/si-mallorca/si-mallorca-3.jpg', alt: 'Hilfsgüter für Familien auf Mallorca' },
+      { src: 'https://adwrup9jyslnyjhd.public.blob.vercel-storage.com/fundacio-predator/simallorca/fundacio-predator-mit-si-mallorca-1.jpg', alt: 'Si Mallorca — Sachspenden für Familien' },
     ],
   },
 };
