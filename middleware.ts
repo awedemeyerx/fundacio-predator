@@ -29,7 +29,7 @@ export async function middleware(request: NextRequest) {
   // --- Admin routes: skip language routing, enforce auth ---
   if (pathname.startsWith('/admin')) {
     // Allow login page and OAuth callback without auth
-    if (pathname === '/admin/login' || pathname.startsWith('/admin/auth/callback') || pathname.startsWith('/admin/auth/reset-callback')) {
+    if (pathname === '/admin/login' || pathname.startsWith('/admin/auth/')) {
       return NextResponse.next();
     }
 

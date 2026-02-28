@@ -29,7 +29,7 @@ export default function AcceptInvitePage() {
     // Sign out any existing session first
     await supabase.auth.signOut();
 
-    const { error: verifyError } = await supabase.auth.verifyOtp({
+    const { data: verifyData, error: verifyError } = await supabase.auth.verifyOtp({
       token_hash: tokenHash,
       type: type === 'invite' ? 'invite' : 'magiclink',
     });
@@ -42,6 +42,19 @@ export default function AcceptInvitePage() {
           : verifyError.message || 'Verifizierung fehlgeschlagen.'
       );
       return;
+    }
+
+    // Sync the new session to server-side cookies so the middleware
+    // and session API recognize the correct user
+    if (verifyData.session) {
+      await fetch('/api/admin/auth/set-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          access_token: verifyData.session.access_token,
+          refresh_token: verifyData.session.refresh_token,
+        }),
+      });
     }
 
     // Redirect to set-password page for invited users
