@@ -27,14 +27,13 @@ function AnimatedNumber({ value }: { value: number }) {
           const start = performance.now();
           const end = value;
 
-          function animate(now: number) {
+          const animate = (now: number) => {
             const elapsed = now - start;
             const progress = Math.min(elapsed / duration, 1);
-            // Ease-out cubic
             const eased = 1 - Math.pow(1 - progress, 3);
             setDisplay(Math.round(eased * end));
             if (progress < 1) requestAnimationFrame(animate);
-          }
+          };
 
           requestAnimationFrame(animate);
         }
