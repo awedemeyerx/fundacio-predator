@@ -4,7 +4,7 @@ import { useState } from 'react';
 import AdminSidebar from '@/components/admin/AdminSidebar';
 import AdminHeader from '@/components/admin/AdminHeader';
 import { useAdminAuth } from '@/components/admin/AdminAuthProvider';
-import { signInWithGoogle } from '@/lib/supabase-browser';
+import { createSupabaseBrowser } from '@/lib/supabase-browser';
 
 export default function ProfilePage() {
   const { user } = useAdminAuth();
@@ -153,7 +153,13 @@ export default function ProfilePage() {
                 type="button"
                 onClick={async () => {
                   setGoogleLoading(true);
-                  const { error } = await signInWithGoogle();
+                  const supabase = createSupabaseBrowser();
+                  const { error } = await supabase.auth.linkIdentity({
+                    provider: 'google',
+                    options: {
+                      redirectTo: `${window.location.origin}/admin/auth/callback`,
+                    },
+                  });
                   if (error) {
                     setMessage({ type: 'error', text: error.message });
                     setGoogleLoading(false);
