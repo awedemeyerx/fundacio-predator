@@ -1,36 +1,144 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Fundació Predator
 
-## Getting Started
+Website und Admin-System der Fundació Predator — einer gemeinnützigen Stiftung auf Mallorca, die Sozialprojekte für bedürftige Familien und Kinder unterstützt.
 
-First, run the development server:
+**Live:** [fundaciopredator.org](https://fundaciopredator.org)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Tech Stack
+
+- **Framework:** Next.js 15 (App Router, TypeScript)
+- **Styling:** Tailwind CSS mit Custom Design System (warm-white, charcoal, amber, gold, forest)
+- **Database:** Supabase (PostgreSQL)
+- **Payments:** Stripe Checkout
+- **Storage:** Vercel Blob (Bilder, Uploads)
+- **Deployment:** Vercel (auto-deploy from `main`)
+- **Email:** Brevo (Transaktions-E-Mails, Benachrichtigungen)
+
+## Projektstruktur
+
+```
+app/
+  [lang]/                   # i18n (de/en/es)
+    page.tsx                # Homepage
+    projekte/               # Projektübersicht + Detailseiten
+    blog/[slug]/            # Blog mit ISR (revalidate=300)
+    spenden/                # Spendenformular + Danke-Seite
+    ueber-uns/              # Über uns
+    kampagne/               # Dynamische Kampagnenseiten (DB)
+    impressum/              # Rechtliches
+    datenschutz/
+  admin/                    # Admin-Panel (geschützt)
+    dashboard/              # KPIs, Statistiken
+    blog/                   # Blog-Editor (BlockNote WYSIWYG)
+    links/                  # Link-in-Bio Verwaltung
+    campaigns/              # Projekt-/Kampagnen-Verwaltung
+    donations/              # Spendenübersicht
+    donors/                 # Spenderliste mit Detailansicht
+    contacts/               # Kontaktanfragen/Nachrichten
+    users/                  # Benutzerverwaltung (Einladung per Magic Link)
+    profile/                # Profilseite mit Google-Verknüpfung
+  api/
+    checkout/               # Stripe Checkout Session
+    admin/                  # Admin API-Endpunkte
+      blog/                 # CRUD + on-demand Revalidation
+      links/                # Link-in-Bio CRUD
+      donors/               # Spenderdaten
+      donations/            # Spendendaten
+      contacts/             # Kontaktanfragen
+      users/                # Benutzerverwaltung + Einladungen
+      upload/               # Vercel Blob Upload
+
+components/
+  layout/                   # Header, Footer, Navigation
+  sections/                 # Homepage-Sektionen (Hero, ProjectsPreview, etc.)
+  admin/                    # Admin-Komponenten (Sidebar, DataTable, BlogPostForm, etc.)
+  ui/                       # Shared UI (FadeIn, StatsCard, etc.)
+
+lib/
+  supabase.ts               # Supabase Client
+  blog.ts                   # Blog-Hilfsfunktionen
+  admin-auth.ts             # Admin-Authentifizierung
+  site.config.ts            # Projektkonfiguration
+  hreflang.ts               # i18n URL-Helfer
+  link-icons.tsx            # Link-in-Bio Icon-Set
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Projekte
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Vier Sozialprojekte (hardcoded in `lib/site.config.ts` und `app/[lang]/projekte/[slug]/page.tsx`):
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. **EducaClowns** — Clown-Therapie für Kinder in Krankenhäusern
+2. **Si Mallorca** — Sachspenden und Soforthilfe für bedürftige Familien
+3. **Pollença** — Musikschule für benachteiligte Kinder
+4. **SOS Mamás** — Unterstützung für alleinerziehende Mütter
 
-## Learn More
+## Admin-System
 
-To learn more about Next.js, take a look at the following resources:
+- **Rollen:** Admin (voller Zugriff) und Editor (Blog-Zugriff)
+- **Auth:** Supabase Auth mit Magic Link + optionalem Google OAuth
+- **Einladung:** Admin lädt per E-Mail ein → Magic Link → Dashboard
+- **Blog-Editor:** BlockNote WYSIWYG mit Cover-Bild (Drag & Drop, Focal Point), Auto-Save, SEO-Autopilot (KI-gestützte Übersetzung + SEO-Generierung), Tags
+- **Spenden:** Stripe-Integration mit Zuordnung zu Projekten, Spenderprofile mit Spendenhistorie
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Internationalisierung
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Drei Sprachen: Deutsch (Standard), Englisch, Spanisch. URL-Struktur:
+- `/` (DE), `/en/` (EN), `/es/` (ES)
+- Blog-Slugs sind pro Sprache individuell
 
-## Deploy on Vercel
+## Deployment
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+git push origin main    # Vercel deployt automatisch
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Kein lokaler Dev-Server nötig — direkt auf main pushen und auf Vercel prüfen.
+
+## Datenbank-Tabellen (Supabase)
+
+- `fundacio_blog_posts` — Blog-Beiträge (trilingual)
+- `fundacio_blog_comments` — Blog-Kommentare
+- `fundacio_blog_likes` — Blog-Likes
+- `fundacio_donations` — Stripe-Spenden
+- `fundacio_donors` — Spenderprofile (aggregiert)
+- `fundacio_contacts` — Kontaktanfragen
+- `fundacio_admin_users` — Admin-Benutzer mit Rollen
+- `fundacio_campaigns` — Kampagnen/Projekte (dynamisch)
+- `link_in_bio` — Link-in-Bio Einträge
+
+## Entwicklungshistorie
+
+### Phase 1–2: Grundgerüst
+- Next.js Setup mit i18n (DE/EN/ES), Design System, Core Pages
+
+### Phase 3: Spenden + Kontakt
+- Stripe Checkout, Kontaktformular mit E-Mail-Benachrichtigung, Cookie Consent
+
+### Phase 4: Blog + Design
+- WordPress-Import (9 Beiträge x 3 Sprachen), Blog-System mit Likes/Kommentaren, Vercel Blob für Bilder
+
+### Phase 5: Admin-System
+- Benutzerverwaltung mit Rollen (Admin/Editor)
+- Google OAuth Login + Account-Verknüpfung
+- Magic Link Einladungen via Brevo
+- Blog-Editor: BlockNote WYSIWYG, Cover-Upload, Focal Point, Auto-Save
+- SEO-Autopilot: KI-gestützte Keyword-Recherche + Übersetzung
+
+### Phase 6: Spenderverwaltung + UI-Polish
+- Spender-Dashboard mit Suchfunktion und Detailansicht
+- Klickbare Spenden mit Modal (Stripe-Session, Spenderdetails)
+- Animierte Statistik-Karten, Admin-UI-Verfeinerungen
+- Link-in-Bio Feature mit Icon-Picker
+
+### Phase 7: Projekte + Content
+- Si Mallorca als 4. Projekt mit trilingualem Content
+- Vercel Blob für Projektbilder (optimierte Auslieferung via next/image)
+- Weihnachtsaktion-Galerie mit Verlinkung zum Blog
+- Projektreihenfolge: EducaClowns → Si Mallorca → Pollença → SOS Mamás
+
+### Bugfixes & Optimierungen
+- Blog-Editor: Zeilenumbrüche bleiben beim Speichern erhalten (onChange-Guard)
+- Link-Erstellung: Fehlerbehandlung + Auth-Checks + DB-Tabelle
+- Blog-Cover: On-demand Revalidation bei Admin-Änderungen (statt nur ISR)
+- Passwort-Reset: PKCE Code Exchange, Client-Side Callback
+- Diverse Auth-Fixes: Invite-Links, Session-Sync, Email-Scanner-Schutz
