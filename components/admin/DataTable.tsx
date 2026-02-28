@@ -10,9 +10,10 @@ interface DataTableProps<T> {
   columns: Column<T>[];
   data: T[];
   emptyMessage?: string;
+  onRowClick?: (item: T) => void;
 }
 
-export default function DataTable<T>({ columns, data, emptyMessage = 'Keine Einträge' }: DataTableProps<T>) {
+export default function DataTable<T>({ columns, data, emptyMessage = 'Keine Einträge', onRowClick }: DataTableProps<T>) {
   if (data.length === 0) {
     return (
       <div className="bg-white rounded-xl border border-charcoal/5 p-12 text-center text-charcoal-muted text-sm">
@@ -36,7 +37,7 @@ export default function DataTable<T>({ columns, data, emptyMessage = 'Keine Eint
           </thead>
           <tbody className="divide-y divide-charcoal/5">
             {data.map((item, i) => (
-              <tr key={i} className="hover:bg-warm-sand/30 transition-colors">
+              <tr key={i} onClick={() => onRowClick?.(item)} className={`hover:bg-warm-sand/30 transition-colors${onRowClick ? ' cursor-pointer' : ''}`}>
                 {columns.map((col) => (
                   <td key={col.key} className="px-4 py-3 text-charcoal-body">
                     {col.render ? col.render(item) : String((item as Record<string, unknown>)[col.key] ?? '')}
