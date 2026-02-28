@@ -11,6 +11,7 @@ const projectCovers: Record<string, { src: string; objectPosition: string }> = {
   educaclowns: { src: '/images/projects/educaclowns/educaclowns-1.jpg', objectPosition: '50% 25%' },
   pollenca: { src: '/images/projects/pollenca/pollenca-1.webp', objectPosition: '50% 50%' },
   'sos-mamas': { src: '/images/projects/sos-mamas/sos-mamas-1.webp', objectPosition: '50% 50%' },
+  'si-mallorca': { src: '/images/projects/si-mallorca/si-mallorca-1.jpg', objectPosition: '50% 50%' },
 };
 
 export default function ProjektePage({ params }: { params: { lang: string } }) {
@@ -35,10 +36,10 @@ export default function ProjektePage({ params }: { params: { lang: string } }) {
             </h1>
             <p className="text-lg text-charcoal-body max-w-2xl mb-16">
               {lang === 'de'
-                ? 'Drei Projekte, ein Ziel: Menschen auf Mallorca nachhaltig unterstützen.'
+                ? 'Vier Projekte, ein Ziel: Menschen auf Mallorca nachhaltig unterstützen.'
                 : lang === 'es'
-                ? 'Tres proyectos, un objetivo: apoyar a las personas en Mallorca de forma sostenible.'
-                : 'Three projects, one goal: sustainably supporting people in Mallorca.'}
+                ? 'Cuatro proyectos, un objetivo: apoyar a las personas en Mallorca de forma sostenible.'
+                : 'Four projects, one goal: sustainably supporting people in Mallorca.'}
             </p>
           </FadeIn>
 

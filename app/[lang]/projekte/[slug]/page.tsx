@@ -35,6 +35,14 @@ const projectImages: Record<string, { hero: string; gallery: { src: string; alt:
       { src: '/images/projects/sos-mamas/sos-mamas-4.webp', alt: 'Ascen Maestre von S.O.S. Mamas und Pilar' },
     ],
   },
+  'si-mallorca': {
+    hero: '/images/projects/si-mallorca/si-mallorca-1.jpg',
+    gallery: [
+      { src: '/images/projects/si-mallorca/si-mallorca-1.jpg', alt: 'Si Mallorca — Sachspenden für Familien' },
+      { src: '/images/projects/si-mallorca/si-mallorca-2.jpg', alt: 'Anja Dauber bei der Spendenausgabe' },
+      { src: '/images/projects/si-mallorca/si-mallorca-3.jpg', alt: 'Hilfsgüter für Familien auf Mallorca' },
+    ],
+  },
 };
 
 const projectContent: Record<
@@ -220,8 +228,81 @@ const projectContent: Record<
   },
 };
 
+  'si-mallorca': {
+    de: {
+      description:
+        'Si Mallorca unterstützt seit 2012 bedürftige Familien, alleinerziehende Mütter und Kinder auf Mallorca — schnell, unbürokratisch und direkt. Jede Woche werden Sachspenden in großem Umfang gesammelt, sortiert und an Familien in Not verteilt.',
+      sections: [
+        {
+          heading: 'Wie alles begann',
+          text: 'Anja Dauber und Ralf Goy hatten bereits in den 1990er Jahren begonnen, Kinderheime und bedürftige Familien auf Mallorca privat zu unterstützen. Als die Bankenkrise 2012 Spanien mit voller Wucht traf und die Armut auf der Insel dramatisch zunahm, gründeten sie Si Mallorca als eingetragenen Sozialverein nach spanischem Recht mit Sitz in Llucmajor.',
+        },
+        {
+          heading: 'Jede Woche Sachspenden im großen Stil',
+          text: 'Was Si Mallorca besonders macht, ist das Ausmaß der wöchentlichen Hilfe. Kleidung, Lebensmittel, Schulmaterial, Möbel, Babyausstattung — alles wird gesammelt, sortiert und direkt an Familien ausgeliefert. Für junge Familien mit Babys und Kleinkindern ist diese Hilfe oft überlebenswichtig. Die Logistik wird größtenteils von Freiwilligen getragen.',
+        },
+        {
+          heading: 'Mehr als Sachspenden',
+          text: 'Si Mallorca hilft auch bei Wohnungsnot: Familien vor der Räumung bekommen Unterstützung bei der Suche nach Alternativen. Ein Begleitservice hilft bei Behördengängen. Schulessen-Patenschaften sorgen dafür, dass kein Kind hungrig im Unterricht sitzt. Und Kinderheime erhalten ergänzende Hilfe für die Betreuung.',
+        },
+        {
+          heading: 'Anja — das Herz der Organisation',
+          text: 'Wer Anja Dauber erlebt, spürt sofort: Hier wird nicht geredet, hier wird gemacht. Mit unermüdlichem Einsatz und einem riesigen Netzwerk an Freiwilligen und Spendern sorgt sie dafür, dass Hilfe dort ankommt, wo sie am dringendsten gebraucht wird — Woche für Woche, Jahr für Jahr.',
+        },
+      ],
+      cta: 'Si Mallorca verkörpert genau das, woran wir bei der Fundació Predator glauben: 100% Engagement, null Bürokratie, maximale Wirkung. Hilf uns, diese wichtige Arbeit zu unterstützen.',
+    },
+    en: {
+      description:
+        'Since 2012, Si Mallorca has been supporting families in need, single mothers, and children across Mallorca — quickly, directly, and without bureaucracy. Every week, material donations are collected, sorted, and distributed to families in crisis on a massive scale.',
+      sections: [
+        {
+          heading: 'How it all began',
+          text: 'Anja Dauber and Ralf Goy had already begun privately supporting children\'s homes and families in need on Mallorca in the 1990s. When the banking crisis hit Spain in 2012 and poverty on the island increased dramatically, they founded Si Mallorca as a registered social welfare association under Spanish law, based in Llucmajor.',
+        },
+        {
+          heading: 'Weekly material donations on a massive scale',
+          text: 'What makes Si Mallorca special is the sheer scale of weekly aid. Clothing, food, school supplies, furniture, baby equipment — everything is collected, sorted, and delivered directly to families. For young families with babies and toddlers, this help is often vital. The logistics are largely carried by volunteers.',
+        },
+        {
+          heading: 'More than material aid',
+          text: 'Si Mallorca also helps with housing emergencies: families facing eviction receive support finding alternatives. An accompaniment service helps navigate bureaucratic processes. School meal sponsorships ensure no child sits hungry in class. And children\'s homes receive supplementary care support.',
+        },
+        {
+          heading: 'Anja — the heart of the organization',
+          text: 'Anyone who meets Anja Dauber instantly feels it: this is not about talking — it\'s about doing. With tireless dedication and a huge network of volunteers and donors, she ensures that help arrives where it\'s needed most — week after week, year after year.',
+        },
+      ],
+      cta: 'Si Mallorca embodies exactly what we believe in at Fundació Predator: 100% commitment, zero bureaucracy, maximum impact. Help us support this vital work.',
+    },
+    es: {
+      description:
+        'Desde 2012, Si Mallorca apoya a familias necesitadas, madres solteras y niños en toda Mallorca — de forma rápida, directa y sin burocracia. Cada semana se recogen, clasifican y distribuyen donaciones materiales a gran escala a familias en situación de crisis.',
+      sections: [
+        {
+          heading: 'Cómo empezó todo',
+          text: 'Anja Dauber y Ralf Goy ya habían comenzado en los años 90 a apoyar de forma privada a hogares infantiles y familias necesitadas en Mallorca. Cuando la crisis bancaria golpeó España en 2012 y la pobreza en la isla aumentó drásticamente, fundaron Si Mallorca como asociación de bienestar social registrada según la ley española, con sede en Llucmajor.',
+        },
+        {
+          heading: 'Donaciones materiales semanales a gran escala',
+          text: 'Lo que hace especial a Si Mallorca es la magnitud de la ayuda semanal. Ropa, alimentos, material escolar, muebles, equipamiento para bebés — todo se recoge, se clasifica y se entrega directamente a las familias. Para familias jóvenes con bebés y niños pequeños, esta ayuda es a menudo vital. La logística se sostiene en gran parte gracias a voluntarios.',
+        },
+        {
+          heading: 'Más que donaciones materiales',
+          text: 'Si Mallorca también ayuda en emergencias de vivienda: las familias amenazadas de desahucio reciben apoyo para encontrar alternativas. Un servicio de acompañamiento ayuda con los trámites burocráticos. El apadrinamiento de comedor escolar garantiza que ningún niño pase hambre en clase. Y los hogares infantiles reciben ayuda complementaria para la atención.',
+        },
+        {
+          heading: 'Anja — el corazón de la organización',
+          text: 'Quien conoce a Anja Dauber lo siente de inmediato: aquí no se habla — se actúa. Con una dedicación incansable y una enorme red de voluntarios y donantes, se asegura de que la ayuda llegue donde más se necesita — semana tras semana, año tras año.',
+        },
+      ],
+      cta: 'Si Mallorca encarna exactamente lo que creemos en la Fundació Predator: 100% compromiso, cero burocracia, máximo impacto. Ayúdanos a apoyar este trabajo vital.',
+    },
+  },
+};
+
 export async function generateStaticParams() {
-  return ['educaclowns', 'pollenca', 'sos-mamas'].flatMap((slug) =>
+  return ['educaclowns', 'pollenca', 'sos-mamas', 'si-mallorca'].flatMap((slug) =>
     ['de', 'en', 'es'].map((lang) => ({ lang, slug }))
   );
 }
