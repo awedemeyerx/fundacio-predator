@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import AdminSidebar from '@/components/admin/AdminSidebar';
 import AdminHeader from '@/components/admin/AdminHeader';
@@ -26,26 +25,18 @@ interface RecentDonation {
 }
 
 export default function DashboardPage() {
-  const router = useRouter();
-  const { isAdmin, isEditor } = useAdminAuth();
+  const { isAdmin } = useAdminAuth();
   const [stats, setStats] = useState<Stats>({ blogPosts: 0, donations: 0, totalRaised: 0, contacts: 0, campaigns: 0 });
   const [recentDonations, setRecentDonations] = useState<RecentDonation[]>([]);
-
-  // Editors go straight to the blog list — no dashboard for them
-  useEffect(() => {
-    if (isEditor && !isAdmin) {
-      router.replace('/admin/blog');
-    }
-  }, [isEditor, isAdmin, router]);
 
   useEffect(() => {
     const fetches: Promise<Response>[] = [
       fetch('/api/admin/blog').then(r => r.json()).catch(() => ({ posts: [] })),
+      fetch('/api/admin/donations').then(r => r.json()).catch(() => ({ donations: [] })),
     ];
 
     if (isAdmin) {
       fetches.push(
-        fetch('/api/admin/donations').then(r => r.json()).catch(() => ({ donations: [] })),
         fetch('/api/admin/contacts').then(r => r.json()).catch(() => ({ contacts: [] })),
         fetch('/api/admin/campaigns').then(r => r.json()).catch(() => ({ campaigns: [] })),
       );
@@ -54,28 +45,17 @@ export default function DashboardPage() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     Promise.all(fetches).then((results: any[]) => {
       const blogData = results[0];
-      if (isAdmin) {
-        const donationData = results[1];
-        const contactData = results[2];
-        const campaignData = results[3];
-        const donations = donationData.donations || [];
-        setStats({
-          blogPosts: (blogData.posts || []).length,
-          donations: donations.length,
-          totalRaised: donations.reduce((sum: number, d: { amount_cents: number }) => sum + (d.amount_cents || 0), 0),
-          contacts: (contactData.contacts || []).length,
-          campaigns: (campaignData.campaigns || []).length,
-        });
-        setRecentDonations(donations.slice(0, 5));
-      } else {
-        setStats({
-          blogPosts: (blogData.posts || []).length,
-          donations: 0,
-          totalRaised: 0,
-          contacts: 0,
-          campaigns: 0,
-        });
-      }
+      const donationData = results[1];
+      const donations = donationData.donations || [];
+
+      setStats({
+        blogPosts: (blogData.posts || []).length,
+        donations: donations.length,
+        totalRaised: donations.reduce((sum: number, d: { amount_cents: number }) => sum + (d.amount_cents || 0), 0),
+        contacts: isAdmin ? (results[2]?.contacts || []).length : 0,
+        campaigns: isAdmin ? (results[3]?.campaigns || []).length : 0,
+      });
+      setRecentDonations(donations.slice(0, 5));
     });
   }, [isAdmin]);
 
@@ -85,24 +65,26 @@ export default function DashboardPage() {
       <div className="flex-1">
         <AdminHeader title="Dashboard" />
         <div className="p-8 space-y-8">
-          <div className={`grid grid-cols-1 sm:grid-cols-2 ${isAdmin ? 'lg:grid-cols-4' : ''} gap-6`}>
+          <div className={`grid grid-cols-1 sm:grid-cols-2 ${isAdmin ? 'lg:grid-cols-4' : 'lg:grid-cols-2'} gap-6`}>
             <StatsCard label="Blog Posts" value={stats.blogPosts} href="/admin/blog" delay={0} />
+            <StatsCard label="Spenden" value={stats.donations} sub={`${(stats.totalRaised / 100).toFixed(2)} EUR`} href={isAdmin ? '/admin/donations' : undefined} delay={1} />
             {isAdmin && (
               <>
-                <StatsCard label="Spenden" value={stats.donations} sub={`${(stats.totalRaised / 100).toFixed(2)} EUR`} href="/admin/donations" delay={1} />
                 <StatsCard label="Projekte" value={stats.campaigns} href="/admin/campaigns" delay={2} />
                 <StatsCard label="Kontakte" value={stats.contacts} href="/admin/contacts" delay={3} />
               </>
             )}
           </div>
 
-          {isAdmin && recentDonations.length > 0 && (
+          {recentDonations.length > 0 && (
             <div className="animate-fade-in-up" style={{ animationDelay: '300ms', animationFillMode: 'backwards' }}>
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-serif font-bold text-charcoal">Letzte Spenden</h2>
-                <Link href="/admin/donations" className="text-sm text-amber hover:text-amber-600 transition-colors">
-                  Alle anzeigen
-                </Link>
+                {isAdmin && (
+                  <Link href="/admin/donations" className="text-sm text-amber hover:text-amber-600 transition-colors">
+                    Alle anzeigen
+                  </Link>
+                )}
               </div>
               <div className="bg-white rounded-2xl shadow-[0_1px_3px_rgba(0,0,0,0.04)] border border-charcoal/[0.06] overflow-hidden">
                 <table className="w-full">

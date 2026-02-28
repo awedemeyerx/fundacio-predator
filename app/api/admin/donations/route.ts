@@ -4,7 +4,7 @@ import { getAdminUser } from '@/lib/admin-auth';
 
 export async function GET() {
   const user = await getAdminUser();
-  if (!user || user.role !== 'admin') {
+  if (!user) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
