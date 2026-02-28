@@ -38,14 +38,17 @@ const projectImages: Record<string, { hero: string; gallery: { src: string; alt:
   'si-mallorca': {
     hero: 'https://adwrup9jyslnyjhd.public.blob.vercel-storage.com/fundacio-predator/simallorca/fundacio-predator-mit-si-mallorca-1.jpg',
     gallery: [
-      { src: 'https://adwrup9jyslnyjhd.public.blob.vercel-storage.com/fundacio-predator/simallorca/fundacio-predator-mit-si-mallorca-1.jpg', alt: 'Si Mallorca — Sachspenden für Familien' },
+      { src: 'https://adwrup9jyslnyjhd.public.blob.vercel-storage.com/fundacio-predator/simallorca/fundacio-predator-mit-si-mallorca-1.jpg', alt: 'Xenia und Anja von hinten — Fundació Predator und Si Mallorca' },
+      { src: 'https://adwrup9jyslnyjhd.public.blob.vercel-storage.com/fundacio-predator/simallorca/weihnachtsaktion%20fundacio%20predator-1.jpg', alt: 'Weihnachtsaktion 2024 — Geschenke für bedürftige Kinder auf Mallorca' },
+      { src: 'https://adwrup9jyslnyjhd.public.blob.vercel-storage.com/fundacio-predator/simallorca/weihnachtsaktion%20fundacio%20predator-1-2.jpg', alt: 'Xenia (Fundació Predator) und Anja (Si Mallorca) bei der Weihnachtsaktion' },
+      { src: 'https://adwrup9jyslnyjhd.public.blob.vercel-storage.com/fundacio-predator/simallorca/weihnachtsaktion-fundacio-predator-1.jpg', alt: 'Weihnachtsaktion — Spendenübergabe an Familien' },
     ],
   },
 };
 
 const projectContent: Record<
   string,
-  Record<string, { description: string; sections: { heading: string; text: string }[]; cta: string }>
+  Record<string, { description: string; sections: { heading: string; text: string; link?: { href: string; label: string } }[]; cta: string }>
 > = {
   educaclowns: {
     de: {
@@ -245,6 +248,11 @@ const projectContent: Record<
           heading: 'Anja — das Herz der Organisation',
           text: 'Wer Anja Dauber erlebt, spürt sofort: Hier wird nicht geredet, hier wird gemacht. Mit unermüdlichem Einsatz und einem riesigen Netzwerk an Freiwilligen und Spendern sorgt sie dafür, dass Hilfe dort ankommt, wo sie am dringendsten gebraucht wird — Woche für Woche, Jahr für Jahr.',
         },
+        {
+          heading: 'Gemeinsame Weihnachtsaktion 2024',
+          text: 'Im Dezember 2024 haben die Fundació Predator und Si Mallorca gemeinsam eine Weihnachtsaktion auf die Beine gestellt: Dank der großzügigen Spenden unserer Community konnten wir bedürftigen Kindern auf Mallorca persönliche Geschenke überreichen. Xenia von der Fundació Predator und Anja von Si Mallorca haben die Geschenke gemeinsam an die Familien verteilt — ein Moment, der zeigt, was möglich ist, wenn zwei Organisationen Hand in Hand arbeiten.',
+          link: { href: '/blog/weihnachtsaktion-kinder-mallorca', label: 'Zum Blog-Beitrag über die Weihnachtsaktion' },
+        },
       ],
       cta: 'Si Mallorca verkörpert genau das, woran wir bei der Fundació Predator glauben: 100% Engagement, null Bürokratie, maximale Wirkung. Hilf uns, diese wichtige Arbeit zu unterstützen.',
     },
@@ -268,6 +276,11 @@ const projectContent: Record<
           heading: 'Anja — the heart of the organization',
           text: 'Anyone who meets Anja Dauber instantly feels it: this is not about talking — it\'s about doing. With tireless dedication and a huge network of volunteers and donors, she ensures that help arrives where it\'s needed most — week after week, year after year.',
         },
+        {
+          heading: 'Joint Christmas Campaign 2024',
+          text: 'In December 2024, Fundació Predator and Si Mallorca joined forces for a Christmas campaign: thanks to the generous donations from our community, we were able to deliver personal gifts to children in need across Mallorca. Xenia from Fundació Predator and Anja from Si Mallorca handed out the presents together to the families — a moment that shows what\'s possible when two organizations work hand in hand.',
+          link: { href: '/blog/christmas-campaign-children-mallorca', label: 'Read the blog post about the Christmas campaign' },
+        },
       ],
       cta: 'Si Mallorca embodies exactly what we believe in at Fundació Predator: 100% commitment, zero bureaucracy, maximum impact. Help us support this vital work.',
     },
@@ -290,6 +303,11 @@ const projectContent: Record<
         {
           heading: 'Anja — el corazón de la organización',
           text: 'Quien conoce a Anja Dauber lo siente de inmediato: aquí no se habla — se actúa. Con una dedicación incansable y una enorme red de voluntarios y donantes, se asegura de que la ayuda llegue donde más se necesita — semana tras semana, año tras año.',
+        },
+        {
+          heading: 'Campaña navideña conjunta 2024',
+          text: 'En diciembre de 2024, la Fundació Predator y Si Mallorca unieron fuerzas para una campaña navideña: gracias a las generosas donaciones de nuestra comunidad, pudimos entregar regalos personales a niños necesitados en toda Mallorca. Xenia de la Fundació Predator y Anja de Si Mallorca repartieron los regalos juntas a las familias — un momento que demuestra lo que es posible cuando dos organizaciones trabajan de la mano.',
+          link: { href: '/blog/campana-navidad-ninos-mallorca', label: 'Leer el artículo sobre la campaña navideña' },
         },
       ],
       cta: 'Si Mallorca encarna exactamente lo que creemos en la Fundació Predator: 100% compromiso, cero burocracia, máximo impacto. Ayúdanos a apoyar este trabajo vital.',
@@ -377,6 +395,17 @@ export default function ProjectPage({
                 <p className="text-charcoal-body leading-relaxed">
                   {section.text}
                 </p>
+                {section.link && (
+                  <Link
+                    href={langUrl(lang, section.link.href)}
+                    className="inline-flex items-center text-amber font-medium mt-3 hover:text-amber-600 transition-colors"
+                  >
+                    {section.link.label}
+                    <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </Link>
+                )}
               </div>
             </FadeIn>
           ))}
