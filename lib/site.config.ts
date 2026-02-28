@@ -118,6 +118,20 @@ export const siteConfig = {
           image: '/images/educaclowns.jpg',
         },
         {
+          slug: 'si-mallorca',
+          title: {
+            de: 'Si Mallorca',
+            en: 'Si Mallorca',
+            es: 'Si Mallorca',
+          } as Localized,
+          excerpt: {
+            de: 'Wöchentliche Sachspenden für bedürftige Familien, Mütter und Kinder auf Mallorca — schnell und unbürokratisch.',
+            en: 'Weekly material donations for families, mothers, and children in need across Mallorca — fast and direct.',
+            es: 'Donaciones materiales semanales para familias, madres y niños necesitados en Mallorca — de forma rápida y directa.',
+          } as Localized,
+          image: '/images/si-mallorca.jpg',
+        },
+        {
           slug: 'pollenca',
           title: {
             de: 'Pollença',
@@ -144,20 +158,6 @@ export const siteConfig = {
             es: 'Apoyo para madres solteras en situaciones difíciles.',
           } as Localized,
           image: '/images/sos-mamas.jpg',
-        },
-        {
-          slug: 'si-mallorca',
-          title: {
-            de: 'Si Mallorca',
-            en: 'Si Mallorca',
-            es: 'Si Mallorca',
-          } as Localized,
-          excerpt: {
-            de: 'Wöchentliche Sachspenden für bedürftige Familien, Mütter und Kinder auf Mallorca — schnell und unbürokratisch.',
-            en: 'Weekly material donations for families, mothers, and children in need across Mallorca — fast and direct.',
-            es: 'Donaciones materiales semanales para familias, madres y niños necesitados en Mallorca — de forma rápida y directa.',
-          } as Localized,
-          image: '/images/si-mallorca.jpg',
         },
       ],
     },

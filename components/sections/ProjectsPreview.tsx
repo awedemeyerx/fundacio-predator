@@ -9,6 +9,7 @@ import FadeIn from '@/components/ui/FadeIn';
 
 const projectCovers: Record<string, { src: string; objectPosition: string }> = {
   educaclowns: { src: '/images/projects/educaclowns/educaclowns-1.jpg', objectPosition: '50% 25%' },
+  'si-mallorca': { src: '/images/projects/si-mallorca/si-mallorca-1.jpg', objectPosition: '50% 50%' },
   pollenca: { src: '/images/projects/pollenca/pollenca-1.webp', objectPosition: '50% 50%' },
   'sos-mamas': { src: '/images/projects/sos-mamas/sos-mamas-1.webp', objectPosition: '50% 50%' },
 };
@@ -39,7 +40,7 @@ export default function ProjectsPreview({ lang }: { lang: Lang }) {
           </div>
         </FadeIn>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {projects.items.map((project, i) => (
             <FadeIn key={project.slug} delay={i * 0.15}>
               <Link

@@ -9,9 +9,9 @@ import { langUrl } from '@/lib/hreflang';
 
 const projectCovers: Record<string, { src: string; objectPosition: string }> = {
   educaclowns: { src: '/images/projects/educaclowns/educaclowns-1.jpg', objectPosition: '50% 25%' },
+  'si-mallorca': { src: '/images/projects/si-mallorca/si-mallorca-1.jpg', objectPosition: '50% 50%' },
   pollenca: { src: '/images/projects/pollenca/pollenca-1.webp', objectPosition: '50% 50%' },
   'sos-mamas': { src: '/images/projects/sos-mamas/sos-mamas-1.webp', objectPosition: '50% 50%' },
-  'si-mallorca': { src: '/images/projects/si-mallorca/si-mallorca-1.jpg', objectPosition: '50% 50%' },
 };
 
 export default function ProjektePage({ params }: { params: { lang: string } }) {

@@ -93,6 +93,7 @@ export default function AdminDonationsPage() {
       render: (d: Donation) => {
         const projectLabels: Record<string, string> = {
           educaclowns: 'EducaClowns',
+          'si-mallorca': 'Si Mallorca',
           pollenca: 'Pollença',
           'sos-mamas': 'SOS Mamás',
         };

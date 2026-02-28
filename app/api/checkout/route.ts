@@ -23,6 +23,7 @@ export async function POST(request: NextRequest) {
     const langKey = lang || 'de';
     const projectNames: Record<string, string> = {
       educaclowns: 'EducaClowns',
+      'si-mallorca': 'Si Mallorca',
       pollenca: 'Pollença',
       'sos-mamas': 'SOS Mamás',
       blog: 'Blog',

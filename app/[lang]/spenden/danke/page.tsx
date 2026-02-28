@@ -11,6 +11,7 @@ import FadeIn from '@/components/ui/FadeIn';
 
 const projectNames: Record<string, string> = {
   educaclowns: 'EducaClowns',
+  'si-mallorca': 'Si Mallorca',
   pollenca: 'Pollença',
   'sos-mamas': 'SOS Mamás',
 };
