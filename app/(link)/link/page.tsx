@@ -53,39 +53,27 @@ export default async function LinkPage({
   }
 
   return (
-    <div className="min-h-screen relative flex flex-col">
-      {/* Hero background image */}
-      <div className="fixed inset-0 -z-10">
-        <Image
-          src="https://adwrup9jyslnyjhd.public.blob.vercel-storage.com/studio-portrait-palma-028.jpg"
-          alt=""
-          fill
-          className="object-cover"
-          priority
-        />
-        <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px]" />
-      </div>
-
+    <div className="min-h-screen bg-warm-white flex flex-col">
       {/* Content */}
-      <div className="flex-1 flex flex-col items-center justify-center px-6 pt-16 pb-12">
-        {/* Avatar / Logo */}
+      <div className="flex-1 flex flex-col items-center px-6 pt-16 pb-12">
+        {/* Logo */}
         <div className="mb-6">
           <Image
             src="/images/logo.png"
             alt="Fundació Predator"
             width={80}
             height={80}
-            className="rounded-2xl shadow-lg shadow-black/20"
+            className="rounded-2xl shadow-sm"
           />
         </div>
 
         {/* Name */}
-        <h1 className="font-serif text-2xl text-white font-bold tracking-tight">
+        <h1 className="font-serif text-2xl text-charcoal font-bold tracking-tight">
           Fundació Predator
         </h1>
 
         {/* Subtitle with sparkle separator */}
-        <p className="text-white/60 text-sm mt-1.5 flex items-center gap-2">
+        <p className="text-charcoal-muted text-sm mt-1.5 flex items-center gap-2">
           <span>Images of Humans</span>
           <span className="text-gold text-xs">&#10022;</span>
           <span>Mallorca</span>
@@ -104,7 +92,7 @@ export default async function LinkPage({
                 href={link.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex items-center gap-3 w-full px-5 py-3.5 rounded-xl border border-white/10 bg-white/10 backdrop-blur-md text-white text-sm font-medium transition-all duration-300 hover:bg-white/20 hover:border-gold/30 hover:shadow-lg hover:shadow-black/10 hover:scale-[1.01]"
+                className="group flex items-center gap-3 w-full px-5 py-3.5 rounded-xl border border-charcoal/8 bg-white text-charcoal text-sm font-medium transition-all duration-300 hover:border-gold/40 hover:shadow-md hover:shadow-charcoal/5 hover:scale-[1.01]"
               >
                 {icon && (
                   <span className="w-5 h-5 text-gold/80 group-hover:text-gold transition-colors duration-300 shrink-0">
@@ -113,7 +101,7 @@ export default async function LinkPage({
                 )}
                 <span className="flex-1">{getTitle(link)}</span>
                 <svg
-                  className="w-4 h-4 text-white/30 group-hover:text-white/50 transition-colors duration-300"
+                  className="w-4 h-4 text-charcoal/20 group-hover:text-charcoal/40 transition-colors duration-300"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -130,7 +118,7 @@ export default async function LinkPage({
           })}
 
           {links.length === 0 && (
-            <p className="text-center text-white/40 text-sm py-8">
+            <p className="text-center text-charcoal-muted text-sm py-8">
               No links yet
             </p>
           )}
