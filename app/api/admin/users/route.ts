@@ -49,82 +49,88 @@ export async function POST(request: NextRequest) {
   // Check if email already exists in admin users table
   const { data: existing } = await supabaseAdmin
     .from('fundacio_admin_users')
-    .select('id')
+    .select('id, email, name, auth_uid')
     .eq('email', email.toLowerCase())
     .single();
 
-  if (existing) {
-    return NextResponse.json({ error: 'User with this email already exists' }, { status: 409 });
-  }
+  const isResend = !!existing;
 
-  // Generate invite link via Supabase Auth (without sending email)
+  // Generate invite link via Supabase Auth
   const redirectTo = 'https://fundaciopredator.org/admin/auth/reset-callback';
-  let authUid: string;
+  let authUid: string = existing?.auth_uid || '';
   let inviteLink: string | null = null;
 
-  const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
-    type: 'invite',
-    email: email.toLowerCase(),
-    options: { redirectTo },
-  });
+  if (!isResend) {
+    // New user: try invite link first
+    const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
+      type: 'invite',
+      email: email.toLowerCase(),
+      options: { redirectTo },
+    });
 
-  if (linkError) {
-    // If user already exists in Auth, look up their existing uid
-    if (linkError.message?.includes('already been registered') || linkError.status === 422) {
-      const { data: listData, error: listError } = await supabaseAdmin.auth.admin.listUsers();
-      if (listError) {
-        return NextResponse.json({ error: listError.message }, { status: 500 });
-      }
-      const existingAuthUser = listData.users.find(
-        (u) => u.email?.toLowerCase() === email.toLowerCase()
-      );
-      if (!existingAuthUser) {
-        return NextResponse.json({ error: 'User exists in auth but could not be found' }, { status: 500 });
-      }
-      authUid = existingAuthUser.id;
-
-      // Generate a magic link for the existing auth user so we can still send an invite email
-      const { data: magicData } = await supabaseAdmin.auth.admin.generateLink({
-        type: 'magiclink',
-        email: email.toLowerCase(),
-        options: { redirectTo },
-      });
-      if (magicData?.properties?.action_link) {
-        inviteLink = magicData.properties.action_link;
+    if (linkError) {
+      if (linkError.message?.includes('already been registered') || linkError.status === 422) {
+        // User exists in Auth but not in admin_users — look up their uid
+        const { data: listData, error: listError } = await supabaseAdmin.auth.admin.listUsers();
+        if (listError) {
+          return NextResponse.json({ error: listError.message }, { status: 500 });
+        }
+        const existingAuthUser = listData.users.find(
+          (u) => u.email?.toLowerCase() === email.toLowerCase()
+        );
+        if (!existingAuthUser) {
+          return NextResponse.json({ error: 'User exists in auth but could not be found' }, { status: 500 });
+        }
+        authUid = existingAuthUser.id;
+      } else {
+        return NextResponse.json({ error: linkError.message }, { status: 500 });
       }
     } else {
-      return NextResponse.json({ error: linkError.message }, { status: 500 });
+      authUid = linkData.user.id;
+      inviteLink = linkData.properties.action_link;
     }
-  } else {
-    authUid = linkData.user.id;
-    inviteLink = linkData.properties.action_link;
+  }
+
+  // If no invite link yet (existing auth user or resend), generate a magic link
+  if (!inviteLink) {
+    const { data: magicData } = await supabaseAdmin.auth.admin.generateLink({
+      type: 'magiclink',
+      email: email.toLowerCase(),
+      options: { redirectTo },
+    });
+    if (magicData?.properties?.action_link) {
+      inviteLink = magicData.properties.action_link;
+    }
   }
 
   // Send invite email via Brevo
   if (inviteLink) {
     try {
-      await sendAdminInvite({ email: email.toLowerCase(), name: name || null, inviteLink });
+      await sendAdminInvite({ email: email.toLowerCase(), name: name || existing?.name || null, inviteLink });
     } catch (emailErr) {
       console.error('Failed to send invite email:', emailErr);
-      // Continue — user was created, email can be resent later
     }
   }
 
-  // Create the admin user entry with the real auth uid
-  const { data, error } = await supabaseAdmin
-    .from('fundacio_admin_users')
-    .insert({
-      auth_uid: authUid,
-      email: email.toLowerCase(),
-      name: name || null,
-      role: role || 'editor',
-    })
-    .select()
-    .single();
+  // Create admin user entry (only for new users)
+  if (!isResend) {
+    const { data, error } = await supabaseAdmin
+      .from('fundacio_admin_users')
+      .insert({
+        auth_uid: authUid,
+        email: email.toLowerCase(),
+        name: name || null,
+        role: role || 'editor',
+      })
+      .select()
+      .single();
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    return NextResponse.json({ user: data });
   }
 
-  return NextResponse.json({ user: data });
+  return NextResponse.json({ user: existing, resent: true });
 }
