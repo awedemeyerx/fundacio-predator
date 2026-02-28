@@ -11,28 +11,43 @@ export default function ResetCallbackPage() {
   useEffect(() => {
     const supabase = createSupabaseBrowser();
 
-    // The hash fragment (#access_token=...&type=recovery) is automatically
-    // detected by the Supabase browser client. Listen for the auth event.
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
-      if (event === 'PASSWORD_RECOVERY' || event === 'SIGNED_IN') {
-        router.push('/admin/auth/set-password');
-      }
-    });
+    // Sign out any existing session first, so the magic link token
+    // from the hash fragment creates a fresh session for the invited user.
+    // We must preserve the hash before signing out, as it contains the token.
+    const hash = window.location.hash;
 
-    // Fallback: if no auth event fires within 5s, check session or redirect
-    const timeout = setTimeout(async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        router.push('/admin/auth/set-password');
-      } else {
-        setError('Link ist ungültig oder abgelaufen.');
-      }
-    }, 5000);
+    (async () => {
+      await supabase.auth.signOut();
 
-    return () => {
-      subscription.unsubscribe();
-      clearTimeout(timeout);
-    };
+      // Re-set the hash so Supabase can pick up the token after sign-out
+      if (hash) {
+        window.location.hash = hash;
+      }
+
+      // Now listen for the auth event from the hash fragment
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+        if (event === 'PASSWORD_RECOVERY' || event === 'SIGNED_IN') {
+          const isInvite = hash.includes('type=invite') || hash.includes('type=magiclink');
+          router.push(`/admin/auth/set-password${isInvite ? '?invite=true' : ''}`);
+        }
+      });
+
+      // Fallback: if no auth event fires within 5s, check session or redirect
+      const timeout = setTimeout(async () => {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          router.push('/admin/auth/set-password');
+        } else {
+          setError('Link ist ungültig oder abgelaufen.');
+        }
+      }, 5000);
+
+      // Cleanup (best-effort since async)
+      window.addEventListener('beforeunload', () => {
+        subscription.unsubscribe();
+        clearTimeout(timeout);
+      });
+    })();
   }, [router]);
 
   if (error) {
