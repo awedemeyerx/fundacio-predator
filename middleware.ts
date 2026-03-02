@@ -115,9 +115,12 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 3. Root / → detect language, redirect or rewrite
+  // 3. Root / → check explicit locale cookie first, then detect language
   if (pathname === '/') {
-    const preferred = getPreferredLang(request);
+    const explicitLocale = request.cookies.get('NEXT_LOCALE')?.value;
+    const preferred = (explicitLocale && SUPPORTED_LANGS.includes(explicitLocale))
+      ? explicitLocale
+      : getPreferredLang(request);
     if (preferred !== DEFAULT_LANG) {
       const url = request.nextUrl.clone();
       url.pathname = `/${preferred}`;
