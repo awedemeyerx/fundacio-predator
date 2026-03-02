@@ -59,8 +59,8 @@ export default function HeroSection({ lang }: { lang: Lang }) {
         <div className="max-w-3xl">
           {/* Overline */}
           <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-[11px] uppercase tracking-[0.3em] text-forest font-medium mb-8"
           >
@@ -69,8 +69,8 @@ export default function HeroSection({ lang }: { lang: Lang }) {
 
           {/* Headline — larger, more dramatic */}
           <motion.h1
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.3 }}
             className="font-serif text-[2.75rem] sm:text-[3.5rem] lg:text-[4.25rem] font-bold text-charcoal leading-[1.08] text-balance mb-7"
           >
@@ -79,8 +79,8 @@ export default function HeroSection({ lang }: { lang: Lang }) {
 
           {/* Subtitle — lighter weight, more breathing room */}
           <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.5 }}
             className="text-[17px] sm:text-lg text-charcoal-body/80 leading-relaxed max-w-xl mb-11 font-light"
           >
@@ -89,8 +89,8 @@ export default function HeroSection({ lang }: { lang: Lang }) {
 
           {/* CTAs */}
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.65 }}
             className="flex flex-col sm:flex-row gap-4"
           >
@@ -115,8 +115,8 @@ export default function HeroSection({ lang }: { lang: Lang }) {
 
       {/* Photo strip — scrolls left on scroll */}
       <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
         transition={{ duration: 0.8, delay: 0.8 }}
         className="relative mt-auto pb-10 sm:pb-16"
       >
