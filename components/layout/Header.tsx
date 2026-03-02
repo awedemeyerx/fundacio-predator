@@ -106,7 +106,6 @@ function CompactLangSwitcher({ lang }: { lang: Lang }) {
               <Link
                 key={code}
                 href={langUrl(code, rawPath)}
-                scroll={false}
                 onClick={() => setOpen(false)}
                 className="block text-[12px] font-medium tracking-wider text-charcoal/50 hover:text-amber hover:bg-warm-sand/60 px-3 py-2 text-center transition-colors"
               >
