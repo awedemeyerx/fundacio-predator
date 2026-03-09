@@ -1,6 +1,9 @@
 import type { Metadata } from 'next';
 import { Inter, Libre_Baskerville } from 'next/font/google';
+import Script from 'next/script';
 import './globals.css';
+
+const GA_ID = 'G-KGMZ9LTCC2';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -34,6 +37,18 @@ export default function RootLayout({
     <html lang="de" className={`${inter.variable} ${libre.variable}`}>
       <body className="font-sans bg-warm-white text-charcoal antialiased">
         {children}
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA_ID}');
+          `}
+        </Script>
       </body>
     </html>
   );
