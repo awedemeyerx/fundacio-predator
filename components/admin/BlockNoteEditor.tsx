@@ -72,18 +72,22 @@ export default function BlockNoteEditor({ initialHTML, onChange }: BlockNoteEdit
   // Load initial HTML only once on mount
   const loaded = useRef(false);
   const userHasEdited = useRef(false);
+  const changeCountAfterLoad = useRef(0);
   useEffect(() => {
     if (loaded.current || !initialHTML || !editor) return;
     loaded.current = true;
+    userHasEdited.current = false;
+    changeCountAfterLoad.current = 0;
     (async () => {
       try {
         const blocks = await editor.tryParseHTMLToBlocks(initialHTML);
         editor.replaceBlocks(editor.document, blocks);
-        // Allow a tick for BlockNote to settle after replaceBlocks,
-        // then enable onChange tracking
+        // Wait longer for BlockNote to settle — replaceBlocks triggers
+        // multiple onChange events internally. We skip the first few
+        // and only enable user tracking after things stabilize.
         setTimeout(() => {
           userHasEdited.current = true;
-        }, 200);
+        }, 1000);
       } catch {
         // ignore parse errors on initial load
         userHasEdited.current = true;

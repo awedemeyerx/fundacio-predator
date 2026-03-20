@@ -86,10 +86,13 @@ export default function BlogPostForm({ post }: BlogPostFormProps) {
     scheduleSave();
   }
 
+  const scheduleSaveRef = useRef(scheduleSave);
+  scheduleSaveRef.current = scheduleSave;
+
   const handleContentChange = useCallback((lang: string) => {
     return (html: string) => {
       setForm(prev => ({ ...prev, [`content_${lang}`]: html }));
-      scheduleSave();
+      scheduleSaveRef.current();
     };
   }, []);
 
