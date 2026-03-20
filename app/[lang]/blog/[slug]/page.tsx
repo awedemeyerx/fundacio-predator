@@ -20,9 +20,9 @@ export async function generateStaticParams() {
   const params: { lang: string; slug: string }[] = [];
 
   for (const s of slugs) {
-    params.push({ lang: 'de', slug: s.slug_de });
-    params.push({ lang: 'en', slug: s.slug_en });
-    params.push({ lang: 'es', slug: s.slug_es });
+    if (s.slug_de) params.push({ lang: 'de', slug: s.slug_de });
+    if (s.slug_en) params.push({ lang: 'en', slug: s.slug_en });
+    if (s.slug_es) params.push({ lang: 'es', slug: s.slug_es });
   }
 
   return params;
