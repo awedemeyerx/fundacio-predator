@@ -43,6 +43,76 @@ p, li, span, a {
   margin-top: 2.5em;
   margin-bottom: 1em;
 }
+.blog-content h2 {
+  margin-top: 2.5em;
+  margin-bottom: 1em;
+  font-size: 2.8rem;
+  line-height: 1.15;
+  font-weight: 700;
+}
+.blog-content [data-content-type="heading"] {
+  font-family: var(--font-libre), Georgia, serif;
+  letter-spacing: -0.015em;
+  color: #1a1a1a;
+}
+.blog-content [data-content-type="heading"][data-level="2"] {
+  margin-top: 2.5em;
+  margin-bottom: 1em;
+  font-size: 2.8rem;
+  line-height: 1.15;
+  font-weight: 700;
+}
+.blog-content [data-content-type="heading"][data-level="2"] > h2 {
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+}
+.blog-content h3 {
+  margin-top: 1.75em;
+  margin-bottom: 0.75em;
+  font-size: 1.25rem;
+  line-height: 1.4;
+  font-weight: 600;
+  color: rgb(26 26 26 / 0.9);
+}
+.blog-content [data-content-type="heading"][data-level="3"] {
+  margin-top: 1.75em;
+  margin-bottom: 0.75em;
+  font-size: 1.25rem;
+  line-height: 1.4;
+  font-weight: 600;
+  color: rgb(26 26 26 / 0.9);
+}
+.blog-content [data-content-type="heading"][data-level="3"] > h3 {
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+}
+.blog-content p,
+.blog-content li {
+  color: rgb(74 74 74 / 0.8);
+  line-height: 1.8;
+  font-size: 16px;
+}
+.blog-content a {
+  color: #E8722A;
+  text-decoration: none;
+}
+.blog-content a:hover {
+  text-decoration: underline;
+}
+.blog-content strong {
+  color: #1a1a1a;
+  font-weight: 600;
+}
 .prose h3 {
   margin-top: 1.75em;
   margin-bottom: 0.75em;

@@ -190,16 +190,7 @@ export default async function BlogPostPage({
 
           {/* Content */}
           <FadeIn delay={0.2}>
-            <div className="blog-content prose prose-lg prose-charcoal max-w-none
-              prose-headings:font-serif prose-headings:text-charcoal
-              prose-h2:text-2xl prose-h2:font-bold
-              prose-h3:text-xl prose-h3:font-semibold prose-h3:text-charcoal/90
-              prose-p:text-charcoal-body/80 prose-p:leading-[1.8] prose-p:text-[16px]
-              prose-a:text-amber prose-a:no-underline hover:prose-a:underline
-              prose-strong:text-charcoal prose-strong:font-semibold
-              prose-li:text-charcoal-body/80 prose-li:leading-[1.8]
-              prose-img:rounded-xl prose-img:shadow-sm
-            ">
+            <div className="blog-content max-w-none">
               {post.content && post.content.includes('<') ? (
                 <BlogContent html={post.content} />
               ) : (
