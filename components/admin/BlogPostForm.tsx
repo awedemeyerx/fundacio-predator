@@ -206,7 +206,10 @@ export default function BlogPostForm({ post }: BlogPostFormProps) {
   }
 
   function handleFocalMouseUp() {
-    setFocalDragging(false);
+        if (focalDragging) {
+                setFocalDragging(false);
+                scheduleSave();
+        }
   }
 
   function updateFocalFromEvent(e: React.MouseEvent<HTMLDivElement>) {
@@ -239,7 +242,6 @@ export default function BlogPostForm({ post }: BlogPostFormProps) {
       removeTag(form.tags[form.tags.length - 1]);
     }
   }
-
   // Translation
   const otherLangs = (current: 'de' | 'en' | 'es') => {
     return (['de', 'en', 'es'] as const).filter(l => l !== current);
