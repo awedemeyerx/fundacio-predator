@@ -1,13 +1,11 @@
 import Link from 'next/link';
-import Image from 'next/image';
-import { Lang } from '@/lib/types';
-import { langUrl } from '@/lib/hreflang';
-import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import FadeIn from '@/components/ui/FadeIn';
 import { getAllPosts, getLocalizedPost } from '@/lib/blog';
 
+
 export const revalidate = 300; // ISR: revalidate every 5 minutes
+
 
 export default async function BlogPage({
   params,
@@ -16,6 +14,7 @@ export default async function BlogPage({
 }) {
   const lang = (params.lang as Lang) || 'de';
   const posts = await getAllPosts();
+
 
   return (
     <>
@@ -37,6 +36,7 @@ export default async function BlogPage({
                 : 'Latest reports from our projects and activities.'}
             </p>
           </FadeIn>
+
 
           {posts.length === 0 ? (
             <FadeIn delay={0.1}>
@@ -62,12 +62,13 @@ export default async function BlogPage({
                             alt={post.title}
                             width={800}
                             height={450}
-                            className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500"
+                            className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-500" style={{ objectPosition: `${post.cover_focal_x ?? 50}% ${post.cover_focal_y ?? 50}%` }}
                           />
                         ) : (
                           <div className="w-full h-full bg-gradient-to-br from-charcoal/[0.03] to-charcoal/[0.06]" />
                         )}
                       </div>
+
 
                       {/* Date */}
                       <time className="text-xs text-charcoal-muted">
@@ -77,33 +78,13 @@ export default async function BlogPage({
                         )}
                       </time>
 
+
                       {/* Title */}
                       <h2 className="font-serif text-xl sm:text-2xl font-bold text-charcoal mt-2 mb-2 group-hover:text-amber transition-colors leading-snug">
                         {post.title}
                       </h2>
 
+
                       {/* Excerpt */}
                       {post.excerpt && (
                         <p className="text-[15px] text-charcoal-body/70 leading-relaxed line-clamp-3">
-                          {post.excerpt}
-                        </p>
-                      )}
-
-                      <span className="inline-flex items-center text-amber text-sm font-medium mt-3">
-                        {lang === 'de' ? 'Weiterlesen' : lang === 'es' ? 'Leer más' : 'Read more'}
-                        <svg className="w-3.5 h-3.5 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                      </span>
-                    </Link>
-                  </FadeIn>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      </main>
-      <Footer lang={lang} />
-    </>
-  );
-}
