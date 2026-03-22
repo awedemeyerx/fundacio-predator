@@ -160,7 +160,7 @@ export default async function BlogPostPage({
                   alt={post.title}
                   width={1200}
                   height={600}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover" style={{ objectPosition: `${post.cover_focal_x ?? 50}% ${post.cover_focal_y ?? 50}%` }}
                   priority
                 />
               </div>
