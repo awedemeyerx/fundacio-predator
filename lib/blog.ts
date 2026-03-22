@@ -16,6 +16,8 @@ export interface BlogPost {
   excerpt_en: string | null;
   excerpt_es: string | null;
   cover_image_url: string | null;
+    cover_focal_x: number | null;
+    cover_focal_y: number | null;
   author: string;
   active: boolean;
   published_at: string;
