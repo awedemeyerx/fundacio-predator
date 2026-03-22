@@ -1,4 +1,10 @@
+import Footer from '@/components/layout/Footer';
+import Header from '@/components/layout/Header';
+import FadeIn from '@/components/ui/FadeIn';
+import { getAllPosts, getLocalizedPost } from '@/lib/blog';
+import { Lang } from '@/types/blog';
 import Link from 'next/link';
+
 
 
 export const revalidate = 300; // ISR: revalidate every 5 minutes
