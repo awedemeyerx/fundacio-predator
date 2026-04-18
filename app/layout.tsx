@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter, Libre_Baskerville } from 'next/font/google';
+import { Analytics } from '@vercel/analytics/next';
 import Script from 'next/script';
 import './globals.css';
 
@@ -49,6 +50,7 @@ export default function RootLayout({
             gtag('config', '${GA_ID}');
           `}
         </Script>
+        <Analytics />
       </body>
     </html>
   );
