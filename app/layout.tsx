@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter, Libre_Baskerville } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
 import Script from 'next/script';
+import { headers } from 'next/headers';
 import './globals.css';
 
 const GA_ID = 'G-KGMZ9LTCC2';
@@ -21,6 +22,7 @@ const libre = Libre_Baskerville({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://fundaciopredator.org'),
   icons: {
     icon: [
       { url: '/favicon.png', type: 'image/png' },
@@ -29,13 +31,16 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const headersList = await headers();
+  const lang = headersList.get('x-locale') || 'de';
+
   return (
-    <html lang="de" className={`${inter.variable} ${libre.variable}`}>
+    <html lang={lang} className={`${inter.variable} ${libre.variable}`}>
       <body className="font-sans bg-warm-white text-charcoal antialiased">
         {children}
         <Script

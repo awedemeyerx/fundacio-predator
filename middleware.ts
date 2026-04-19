@@ -110,9 +110,11 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url, 301);
   }
 
-  // 2. /en/... or /es/... → pass through, Next.js handles [lang] segment
+  // 2. /en/... or /es/... → pass through, set locale header
   if (firstSegment === 'en' || firstSegment === 'es') {
-    return NextResponse.next();
+    const response = NextResponse.next();
+    response.headers.set('x-locale', firstSegment);
+    return response;
   }
 
   // 3. Root / → check explicit locale cookie first, then detect language
